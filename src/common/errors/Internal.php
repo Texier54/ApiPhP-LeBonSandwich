@@ -9,7 +9,7 @@
 			// ajoute ou remplace
 			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
 
-			$rs= $resp->withStatus(500);
+			$rs= $rs->withStatus(500);
 
 			$temp = array("type" => "error", "error" => '500', "message" => "Erreur interne");
 			

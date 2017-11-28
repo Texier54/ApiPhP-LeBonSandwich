@@ -9,7 +9,7 @@
 			// ajoute ou remplace
 			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
 
-			$rs= $resp->withStatus(400);
+			$rs= $rs->withStatus(400);
 
 			$temp = array("type" => "error", "error" => '400', "message" => "url inconnu : ");
 			

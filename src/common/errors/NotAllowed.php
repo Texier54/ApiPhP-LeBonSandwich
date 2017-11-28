@@ -9,7 +9,7 @@
 			// ajoute ou remplace
 			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
 
-			$rs= $resp->withStatus(405);
+			$rs= $rs->withStatus(405);
 
 			$temp = array("type" => "error", "error" => '405', "message" => "Not allowed");
 			
