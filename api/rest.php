@@ -47,6 +47,26 @@ $app->get('/categories/{id}', function (Request $req, Response $resp, $args) {
 
 
 
+$app->get('/sandwich/{id}', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\control\CatalogueController($this);
+
+	return $c->getDescSandwich($req, $resp, $args);
+	}
+);
+
+
+
+$app->get('/sandwich[/]', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\control\CatalogueController($this);
+
+	return $c->getSandwich($req, $resp, $args);
+	}
+);
+
+
+
 $app->post('/categories[/]', function (Request $req, Response $resp, $args) {
 
 	$c = new lbs\control\CatalogueController($this);
