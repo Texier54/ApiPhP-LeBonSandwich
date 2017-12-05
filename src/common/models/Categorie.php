@@ -7,16 +7,16 @@
  * @author: canals
  */
 
-namespace lbs\models;
+namespace lbs\common\models;
 
 
 /**
  * Class Categorie
  * @package catawish\models
  */
-class Sandwich extends \Illuminate\Database\Eloquent\Model {
+class Categorie extends \Illuminate\Database\Eloquent\Model {
 
-    protected $table = 'sandwich';
+    protected $table = 'categorie';
     protected $primaryKey = 'id';
     public $timestamps = false;
 

@@ -20,7 +20,7 @@ $error = require_once __DIR__.'/../src/conf/error.php';
 
 $conf = ['settings' => ['displayErrorDetails' => true]];
 
-$conf = array_merge($conf, $error);
+//$conf = array_merge($conf, $error);
 $app = new \Slim\App($conf);
 
 $app->get('/hello/{name}', function (Request $req, Response $resp, $args) {
@@ -32,14 +32,14 @@ $app->get('/hello/{name}', function (Request $req, Response $resp, $args) {
 
 $app->get('/categories[/]', function (Request $req, Response $resp, $args) {
 
-	$c = new lbs\control\CatalogueController($this);
+	$c = new lbs\api\control\CatalogueController($this);
 	return $c->getCategorie($req, $resp, $args);
 }
 );
 
 $app->get('/categories/{id}', function (Request $req, Response $resp, $args) {
 
-	$c = new lbs\control\CatalogueController($this);
+	$c = new lbs\api\control\CatalogueController($this);
 
 	return $c->getDesc($req, $resp, $args);
 	}
@@ -47,19 +47,19 @@ $app->get('/categories/{id}', function (Request $req, Response $resp, $args) {
 
 
 
-$app->get('/sandwich/{id}', function (Request $req, Response $resp, $args) {
+$app->get('/sandwichs/{id}', function (Request $req, Response $resp, $args) {
 
-	$c = new lbs\control\CatalogueController($this);
+	$c = new lbs\api\control\CatalogueController($this);
 
 	return $c->getDescSandwich($req, $resp, $args);
 	}
-);
+)->setName('sandid');
 
 
 
-$app->get('/sandwich[/]', function (Request $req, Response $resp, $args) {
+$app->get('/sandwichs[/]', function (Request $req, Response $resp, $args) {
 
-	$c = new lbs\control\CatalogueController($this);
+	$c = new lbs\api\control\CatalogueController($this);
 
 	return $c->getSandwich($req, $resp, $args);
 	}
@@ -72,6 +72,23 @@ $app->post('/categories[/]', function (Request $req, Response $resp, $args) {
 	$c = new lbs\control\CatalogueController($this);
 
 	return $c->createCategorie($req, $resp, $args);
+	}
+);
+
+$app->put('/categories/{id}', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\CatalogueController($this);
+
+	return $c->updateCategorie($req, $resp, $args);
+	}
+);
+
+
+$app->get('/categories/{id}/sandwich', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\CatalogueController($this);
+
+	return $c->getSandwichFromCategorie($req, $resp, $args);
 	}
 );
 
