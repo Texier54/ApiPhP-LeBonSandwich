@@ -79,11 +79,23 @@
 			try {
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
 
+				$arrCateg = $arr->categories()->select('id', 'nom')->get();
+
+				foreach ($arrCateg as $key => $value) {
+					unset($value['pivot']);
+				}
+
+				$arrTaille = $arr->tailles()->select('id', 'nom', 'prix')->get();
+
+				foreach ($arrTaille as $key => $value) {
+					unset($value['pivot']);
+				}
+
 				$urlCateg = $this->container['router']->pathFor('catFromSand', [ 'id' => $args['id'] ]);
 
 				$urlTailles = $this->container['router']->pathFor('tailleFromSand', [ 'id' => $args['id'] ]);
 
-				$temp = array('type' => 'collection', 'meta' => ['locale' => 'fr-FR'], 'sandwich' => $arr, 'links' => ['categories' => ['href' => $urlCateg], 'tailles' => ['href' => $urlTailles]]);
+				$temp = array('type' => 'collection', 'meta' => ['locale' => 'fr-FR'], 'sandwich' => $arr, 'categories' => $arrCateg, 'tailles' => $arrTaille, 'links' => ['categories' => ['href' => $urlCateg], 'tailles' => ['href' => $urlTailles]]);
 			}
 			catch(\Exception $e)
 			{
@@ -212,6 +224,11 @@
 			try {
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
 				$requete = $arr->sandwichs()->select('id', 'nom', 'type_pain')->get();
+
+				foreach ($requete as $key => $value) {
+					unset($value['pivot']);
+				}
+
 				$count = count($requete);
 			}
 			catch(\Exception $e)
@@ -247,6 +264,11 @@
 			try {
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
 				$requete = $arr->categories()->select()->get();
+
+				foreach ($requete as $key => $value) {
+					unset($value['pivot']);
+				}
+
 				$count = count($requete);
 			}
 			catch(\Exception $e)
@@ -263,7 +285,7 @@
 				$tab[] = array('sandwich' => $value, 'links' => ['href' => $url]);
 			}
 
-			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => $tab);
+			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'categories' => $tab);
 
 			$rs->getBody()->write(json_encode($arr));
 
@@ -282,6 +304,11 @@
 			try {
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
 				$requete = $arr->tailles()->select()->get();
+
+				foreach ($requete as $key => $value) {
+					unset($value['pivot']);
+				}
+
 				$count = count($requete);
 			}
 			catch(\Exception $e)
@@ -294,7 +321,7 @@
 				$tab[] = array('sandwich' => $value);
 			}
 
-			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => $tab);
+			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'tailles' => $tab);
 
 			$rs->getBody()->write(json_encode($arr));
 
