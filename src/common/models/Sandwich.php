@@ -31,4 +31,16 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
 	       /* 'club_id'        : la clé étrangère du modèle lié dans la table pivot */
 	}
 
+
+	public function tailles() {
+	       return $this->belongsToMany('\lbs\common\models\Taille', 'tarif', 'sand_id', 'taille_id');
+
+	       /* 'Clubs'          : le nom de la classe du model lié */
+	       /* 'usagers_clubs ' : le nom de la table pivot */
+
+	       /* 'usagers_id'     : la clé étrangère de ce modèle dans la table pivot */
+	       /* 'club_id'        : la clé étrangère du modèle lié dans la table pivot */
+	}
+
+
 }

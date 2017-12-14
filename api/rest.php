@@ -41,7 +41,7 @@ $app->get('/categories/{id}', function (Request $req, Response $resp, $args) {
 
 	$c = new lbs\api\control\CatalogueController($this);
 
-	return $c->getDesc($req, $resp, $args);
+	return $c->getDescCategorie($req, $resp, $args);
 	}
 )->setName('catid');
 
@@ -90,7 +90,9 @@ $app->get('/categories/{id}/sandwichs', function (Request $req, Response $resp, 
 
 	return $c->getSandwichFromCategorie($req, $resp, $args);
 	}
-);
+)->setName('sandFromCat');
+
+
 
 $app->get('/sandwichs/{id}/categories', function (Request $req, Response $resp, $args) {
 
@@ -98,7 +100,18 @@ $app->get('/sandwichs/{id}/categories', function (Request $req, Response $resp, 
 
 	return $c->getCategorieFromSandwich($req, $resp, $args);
 	}
-);
+)->setName('catFromSand');
+
+
+
+$app->get('/sandwichs/{id}/tailles', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\CatalogueController($this);
+
+	return $c->getTailleFromSandwich($req, $resp, $args);
+	}
+)->setName('tailleFromSand');
+
 
 $app->run();
  

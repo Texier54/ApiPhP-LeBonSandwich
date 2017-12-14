@@ -78,11 +78,16 @@
 
 			try {
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
-				$temp = array('type' => 'collection', 'meta' => ['locale' => 'fr-FR'], 'categorie' => $arr);
+
+				$urlCateg = $this->container['router']->pathFor('catFromSand', [ 'id' => $args['id'] ]);
+
+				$urlTailles = $this->container['router']->pathFor('tailleFromSand', [ 'id' => $args['id'] ]);
+
+				$temp = array('type' => 'collection', 'meta' => ['locale' => 'fr-FR'], 'sandwich' => $arr, 'links' => ['categories' => ['href' => $urlCateg], 'tailles' => ['href' => $urlTailles]]);
 			}
 			catch(\Exception $e)
 			{
-				$url = $this->container['router']->pathFor('catid', [ 'id' => $args['id'] ]);
+				$url = $this->container['router']->pathFor('sandid', [ 'id' => $args['id'] ]);
 
 				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ".$url);
 			}
@@ -93,7 +98,7 @@
 
 		}
 
-		public function getDesc($req, $resp, $args) {
+		public function getDescCategorie($req, $resp, $args) {
 
 			// ajoute ou remplace
 			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
@@ -256,6 +261,37 @@
 				$url = $this->container['router']->pathFor('catid', [ 'id' => $value['id'] ]);
 
 				$tab[] = array('sandwich' => $value, 'links' => ['href' => $url]);
+			}
+
+			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => $tab);
+
+			$rs->getBody()->write(json_encode($arr));
+
+			return $rs;
+
+		}
+
+
+		public function getTailleFromSandwich($req, $resp, $args) {
+
+			// ajoute ou remplace
+			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+
+			$arr = new \lbs\common\models\Sandwich();
+
+			try {
+				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
+				$requete = $arr->tailles()->select()->get();
+				$count = count($requete);
+			}
+			catch(\Exception $e)
+			{
+				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ");
+			}
+
+			foreach ($requete as $key => $value) {
+
+				$tab[] = array('sandwich' => $value);
 			}
 
 			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => $tab);
