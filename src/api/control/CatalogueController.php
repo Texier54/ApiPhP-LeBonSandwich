@@ -161,6 +161,16 @@
 				$resp->getBody()->write(json_encode($categ->toArray()));
 				return $resp;
 			}
+			else
+			{
+				$resp= $resp->withStatus(400);
+
+				$temp = array("type" => "error", "error" => '400', "message" => "Donnée manquante");
+				
+				$resp->getBody()->write(json_encode($temp));
+
+				return $resp;
+			}
 		}
 
 		public function updateCategorie($req, $resp, $args) {
@@ -225,10 +235,6 @@
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
 				$requete = $arr->sandwichs()->select('id', 'nom', 'type_pain')->get();
 
-				foreach ($requete as $key => $value) {
-					unset($value['pivot']);
-				}
-
 				$count = count($requete);
 			}
 			catch(\Exception $e)
@@ -245,7 +251,10 @@
 				$tab[] = array('sandwich' => $value, 'links' => ['href' => $url]);
 			}
 
-			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => $tab);
+			if(!isset($tab))
+				$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => '');
+			else
+				$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => $tab);
 
 			$rs->getBody()->write(json_encode($arr));
 
@@ -265,10 +274,6 @@
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
 				$requete = $arr->categories()->select()->get();
 
-				foreach ($requete as $key => $value) {
-					unset($value['pivot']);
-				}
-
 				$count = count($requete);
 			}
 			catch(\Exception $e)
@@ -282,10 +287,13 @@
 
 				$url = $this->container['router']->pathFor('catid', [ 'id' => $value['id'] ]);
 
-				$tab[] = array('sandwich' => $value, 'links' => ['href' => $url]);
+				$tab[] = array('categorie' => $value, 'links' => ['href' => $url]);
 			}
 
-			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'categories' => $tab);
+			if(!isset($tab))
+				$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'categories' => '');
+			else
+				$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'categories' => $tab);
 
 			$rs->getBody()->write(json_encode($arr));
 
@@ -303,11 +311,7 @@
 
 			try {
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
-				$requete = $arr->tailles()->select()->get();
-
-				foreach ($requete as $key => $value) {
-					unset($value['pivot']);
-				}
+				$requete = $arr->tailles()->select('id', 'nom', 'prix')->get();
 
 				$count = count($requete);
 			}
@@ -318,16 +322,62 @@
 
 			foreach ($requete as $key => $value) {
 
-				$tab[] = array('sandwich' => $value);
+				$tab[] = array('taille' => $value);
 			}
 
-			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'tailles' => $tab);
+			if(!isset($tab))
+				$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'tailles' => '');
+			else
+				$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'tailles' => $tab);
 
 			$rs->getBody()->write(json_encode($arr));
 
 			return $rs;
 
 		}
+
+
+		public function createCommande($req, $resp, $args) {
+
+			$parsedBody = $req->getParsedBody();
+
+			if(isset($parsedBody['nom']) && isset($parsedBody['prenom']) && isset($parsedBody['mail']) )
+			{
+				//return Write::json_error($rs, code:400, message:'Manque un truc');
+
+				$com = new \lbs\common\models\Commande();
+				$com->nom = filter_var($parsedBody['nom'], FILTER_SANITIZE_STRING);
+				$com->prenom = filter_var($parsedBody['prenom'], FILTER_SANITIZE_STRING);
+				$com->mail = filter_var($parsedBody['mail'], FILTER_SANITIZE_STRING);
+				$com->token = uniqid();
+
+				try {
+					$com->save();
+				} catch(\Exception $e) {
+					echo 'erreur';
+				}
+
+				$resp= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+
+				$resp= $resp->withStatus(201);
+
+				//$resp = $resp->withHeader('Location', $this->container['router']->pathFor('comid', ['id' => $com->id] ) );
+
+				$resp->getBody()->write(json_encode($com->toArray()));
+				return $resp;
+			}
+			else
+			{
+				$resp= $resp->withStatus(400);
+
+				$temp = array("type" => "error", "error" => '400', "message" => "Donnée manquante");
+				
+				$resp->getBody()->write(json_encode($temp));
+
+				return $resp;
+			}
+		}
+
 
 
 	}

@@ -113,5 +113,15 @@ $app->get('/sandwichs/{id}/tailles', function (Request $req, Response $resp, $ar
 )->setName('tailleFromSand');
 
 
+
+$app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\CatalogueController($this);
+
+	return $c->createCommande($req, $resp, $args);
+	}
+);
+
+
 $app->run();
  
