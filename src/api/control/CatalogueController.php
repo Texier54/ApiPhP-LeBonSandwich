@@ -197,5 +197,74 @@
 			}
 		}
 
+		public function getSandwichFromCategorie($req, $resp, $args) {
+
+			// ajoute ou remplace
+			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+
+			$arr = new \lbs\common\models\Categorie();
+
+			try {
+				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
+				$requete = $arr->sandwichs()->select('id', 'nom', 'type_pain')->get();
+				$count = count($requete);
+			}
+			catch(\Exception $e)
+			{
+				$url = $this->container['router']->pathFor('sandid', [ 'id' => $args['id'] ]);
+
+				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ".$url);
+			}
+
+			foreach ($requete as $key => $value) {
+
+				$url = $this->container['router']->pathFor('sandid', [ 'id' => $value['id'] ]);
+
+				$tab[] = array('sandwich' => $value, 'links' => ['href' => $url]);
+			}
+
+			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => $tab);
+
+			$rs->getBody()->write(json_encode($arr));
+
+			return $rs;
+
+		}
+
+
+		public function getCategorieFromSandwich($req, $resp, $args) {
+
+			// ajoute ou remplace
+			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+
+			$arr = new \lbs\common\models\Sandwich();
+
+			try {
+				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
+				$requete = $arr->categories()->select()->get();
+				$count = count($requete);
+			}
+			catch(\Exception $e)
+			{
+				$url = $this->container['router']->pathFor('catid', [ 'id' => $args['id'] ]);
+
+				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ".$url);
+			}
+
+			foreach ($requete as $key => $value) {
+
+				$url = $this->container['router']->pathFor('catid', [ 'id' => $value['id'] ]);
+
+				$tab[] = array('sandwich' => $value, 'links' => ['href' => $url]);
+			}
+
+			$arr = array('type' => 'collection', 'meta' => [ 'count' => $count,'date' => date('d-m-Y')], 'sandwichs' => $tab);
+
+			$rs->getBody()->write(json_encode($arr));
+
+			return $rs;
+
+		}
+
 
 	}

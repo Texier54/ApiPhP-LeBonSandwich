@@ -84,11 +84,19 @@ $app->put('/categories/{id}', function (Request $req, Response $resp, $args) {
 );
 
 
-$app->get('/categories/{id}/sandwich', function (Request $req, Response $resp, $args) {
+$app->get('/categories/{id}/sandwichs', function (Request $req, Response $resp, $args) {
 
 	$c = new lbs\api\control\CatalogueController($this);
 
 	return $c->getSandwichFromCategorie($req, $resp, $args);
+	}
+);
+
+$app->get('/sandwichs/{id}/categories', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\CatalogueController($this);
+
+	return $c->getCategorieFromSandwich($req, $resp, $args);
 	}
 );
 
