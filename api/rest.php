@@ -123,5 +123,14 @@ $app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
 );
 
 
+$app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\CatalogueController($this);
+
+	return $c->getDescCommande($req, $resp, $args);
+	}
+);
+
+
 $app->run();
  

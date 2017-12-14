@@ -81,10 +81,6 @@
 
 				$arrCateg = $arr->categories()->select('id', 'nom')->get();
 
-				foreach ($arrCateg as $key => $value) {
-					unset($value['pivot']);
-				}
-
 				$arrTaille = $arr->tailles()->select('id', 'nom', 'prix')->get();
 
 				foreach ($arrTaille as $key => $value) {
@@ -341,7 +337,7 @@
 
 			$parsedBody = $req->getParsedBody();
 
-			if(isset($parsedBody['nom']) && isset($parsedBody['prenom']) && isset($parsedBody['mail']) )
+			if(isset($parsedBody['nom']) && isset($parsedBody['prenom']) && isset($parsedBody['mail']) && isset($parsedBody['date-livraison']))
 			{
 				//return Write::json_error($rs, code:400, message:'Manque un truc');
 
@@ -349,6 +345,7 @@
 				$com->nom = filter_var($parsedBody['nom'], FILTER_SANITIZE_STRING);
 				$com->prenom = filter_var($parsedBody['prenom'], FILTER_SANITIZE_STRING);
 				$com->mail = filter_var($parsedBody['mail'], FILTER_SANITIZE_STRING);
+				$com->livraison = $parsedBody['date-livraison'];
 				$com->token = uniqid();
 
 				try {
@@ -379,5 +376,30 @@
 		}
 
 
+
+		public function getDescCommande($req, $resp, $args) {
+
+			// ajoute ou remplace
+			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+
+			$arr = new \lbs\common\models\Commande();
+
+			try {
+				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
+
+				$temp = array('type' => 'collection', 'meta' => ['locale' => 'fr-FR'], 'commande' => $arr);
+			}
+			catch(\Exception $e)
+			{
+				$url = $this->container['router']->pathFor('sandid', [ 'id' => $args['id'] ]);
+
+				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ".$url);
+			}
+			
+			$rs->getBody()->write(json_encode($temp));
+
+			return $rs;
+
+		}
 
 	}
