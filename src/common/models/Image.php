@@ -7,16 +7,16 @@
  * @author: canals
  */
 
-namespace lbs\models;
+namespace catawich\common\models;
 
 
 /**
  * Class Categorie
  * @package catawish\models
  */
-class Categorie extends \Illuminate\Database\Eloquent\Model {
+class Image extends \Illuminate\Database\Eloquent\Model {
 
-    protected $table = 'categorie';
+    protected $table = 'image';
     protected $primaryKey = 'id';
     public $timestamps = false;
 
