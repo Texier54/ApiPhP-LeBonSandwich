@@ -1,6 +1,7 @@
 <?php
 
 	namespace lbs\api\control;
+	use Ramsey\Uuid\Uuid;
 
 	class CatalogueController {
 
@@ -335,47 +336,48 @@
 
 		public function createCommande($req, $resp, $args) {
 
-			$parsedBody = $req->getParsedBody();
+			if ($req->getAttribute( 'has_errors' )) {
 
-			if(isset($parsedBody['nom']) && isset($parsedBody['prenom']) && isset($parsedBody['mail']) && isset($parsedBody['date-livraison']))
-			{
-				//return Write::json_error($rs, code:400, message:'Manque un truc');
-
-				$com = new \lbs\common\models\Commande();
-				$com->nom = filter_var($parsedBody['nom'], FILTER_SANITIZE_STRING);
-				$com->prenom = filter_var($parsedBody['prenom'], FILTER_SANITIZE_STRING);
-				$com->mail = filter_var($parsedBody['mail'], FILTER_SANITIZE_STRING);
-				$com->livraison = $parsedBody['date-livraison'];
-				$com->token = uniqid();
-
-				try {
-					$com->save();
-				} catch(\Exception $e) {
-					echo 'erreur';
-				}
-
-				$resp= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
-
-				$resp= $resp->withStatus(201);
-
-				//$resp = $resp->withHeader('Location', $this->container['router']->pathFor('comid', ['id' => $com->id] ) );
-
-				$resp->getBody()->write(json_encode($com->toArray()));
-				return $resp;
-			}
-			else
-			{
 				$resp= $resp->withStatus(400);
 
 				$temp = array("type" => "error", "error" => '400', "message" => "Donnée manquante");
 				
 				$resp->getBody()->write(json_encode($temp));
 
+				return $resp;	
+			} 
+			else {
+
+				$parsedBody = $req->getParsedBody();
+
+				$com = new \lbs\common\models\Commande();
+				$com->id = Uuid::uuid1();
+				$com->nom = filter_var($parsedBody['nom_client'], FILTER_SANITIZE_STRING);
+				$com->mail = filter_var($parsedBody['mail_client'], FILTER_SANITIZE_STRING);
+				$com->etat = 1;
+				$com->date = $parsedBody['livraison']['date'];
+				$com->heure = $parsedBody['livraison']['heure'];
+				$com->token = bin2hex(random_bytes(32));
+
+				try {
+					$com->save();
+				} catch(\Exception $e) {
+					echo $e->getmessage();
+				}
+
+				$resp= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+
+				$resp= $resp->withStatus(201);
+
+				$resp = $resp->withHeader('Location', $this->container['router']->pathFor('comid', ['id' => $com->id] ) );
+
+				$tab = ['commande' => ['nom_client' => $com->nom, 'mail_client' => $com->mail, 'livraison' => ['date' => $com->date, 'heure' => $com->heure]], 'id' => $com->id, 'token' => $com->token];
+
+				$resp->getBody()->write(json_encode($tab));
 				return $resp;
+
 			}
 		}
-
-
 
 		public function getDescCommande($req, $resp, $args) {
 
@@ -388,6 +390,18 @@
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
 
 				$temp = array('type' => 'collection', 'meta' => ['locale' => 'fr-FR'], 'commande' => $arr);
+
+				if($arr->token != $req->getQueryParams()['token'])
+				{
+					$resp= $resp->withStatus(405);
+
+					$temp = array("type" => "error", "error" => '405', "message" => "Not allowed");
+					
+					$resp->getBody()->write(json_encode($temp));
+
+					return $resp;
+				}
+
 			}
 			catch(\Exception $e)
 			{
@@ -400,6 +414,50 @@
 
 			return $rs;
 
+
+		}
+
+
+		public function createItem($req, $resp, $args) {
+
+			if ($req->getAttribute( 'has_errors' )) {
+
+				$resp= $resp->withStatus(400);
+
+				$temp = array("type" => "error", "error" => '400', "message" => "Donnée manquante");
+				
+				$resp->getBody()->write(json_encode($temp));
+
+				return $resp;	
+			} 
+			else {
+
+				$parsedBody = $req->getParsedBody();
+
+				$item = new \lbs\common\models\Item();
+				$item->id_commande = $args['id'];
+				$item->id_sandwich = $parsedBody['sandwich']['id_sandwich'];
+				$item->id_taille_sandwich = $parsedBody['sandwich']['id_taille'];
+				$item->qte = $parsedBody['sandwich']['qte'];
+
+				try {
+					$item->save();
+				} catch(\Exception $e) {
+					echo $e->getmessage();
+				}
+
+				$resp= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+
+				$resp= $resp->withStatus(201);
+
+				//$resp = $resp->withHeader('Location', $this->container['router']->pathFor('comid', ['id' => $item->id] ) );
+
+				$tab = ['id_commande' => $item->id_commande, 'sandwich' => ['id_sandwich' => $item->id_sandwich, 'id_taille' => $item->id_taille_sandwich, 'quantite' => $item->qte]];
+
+				$resp->getBody()->write(json_encode($tab));
+				return $resp;
+
+			}
 		}
 
 	}
