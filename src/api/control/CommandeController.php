@@ -68,7 +68,7 @@ class CommandeController extends BaseController
 			return $response->withStatus(201)->withJson([
 				"type" => "ressource",
 				"commande" => $commande,
-				"links" => ["self" => ["href" => $this->get('router')->pathFor('get_commande', ['id' => $commande->token])]]
+				"links" => ["self" => ["href" => $this->get('router')->pathFor('comid', ['id' => $commande->token])]]
 			]);
 		}
 
