@@ -3,7 +3,6 @@
 
 require_once __DIR__.'/../src/vendor/autoload.php';
 
-
 $config = parse_ini_file('../src/conf/lbs.db.conf.ini');
 
 $db = new Illuminate\Database\Capsule\Manager();
@@ -16,12 +15,45 @@ $db->bootEloquent();
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use \Respect\Validation\Validator as v;
+use \DavidePastore\Slim\Validation\Validation as Validation;
+
 $error = require_once __DIR__.'/../src/conf/error.php';
 
 $conf = ['settings' => ['displayErrorDetails' => true]];
 
 //$conf = array_merge($conf, $error);
 $app = new \Slim\App($conf);
+
+
+
+function checkToken ( Request $rq, Response $rs, callable $next ) 
+{
+	// récupérer l'identifiant de cmmde dans la route et le token
+	$id = $rq->getAttribute('route')->getArgument( 'id');
+	$token = $rq->getQueryParam('token', null);
+
+	// vérifier que le token correspond à la commande
+	try 
+	{
+		\lbs\common\models\Commande::where('id', '=', $id)->where('token', '=',$token)->firstOrFail();
+
+	} catch (ModelNotFoundException $e) {
+
+		$rs= $rs->withStatus(404);
+
+		$temp = array("type" => "error", "error" => '404', "message" => "Le token n'est pas valide");
+			
+		$rs->getBody()->write(json_encode($temp));
+		return $rs;
+
+	};
+
+	return $next($rq, $rs);
+};
+
+
 
 $app->get('/hello/{name}', function (Request $req, Response $resp, $args) {
 	$name = $args['name'];
@@ -122,6 +154,12 @@ $app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
 	}
 );
 
+	$validators = [
+	'nom_client'    => v::StringType()->alpha()->length(3,30) ,
+	'email_client'     => v::email() ,
+	'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' ),
+						'heure' =>v::date('h:i'),
+	] ];
 
 $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
@@ -129,8 +167,7 @@ $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
 	return $c->getDescCommande($req, $resp, $args);
 	}
-);
-
+)->setName('comid')->add('checkToken')->add(new Validation( $validators));
 
 $app->run();
  

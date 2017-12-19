@@ -1,6 +1,7 @@
 <?php
 
 	namespace lbs\api\control;
+	use Ramsey\Uuid\Uuid;
 
 	class CatalogueController {
 
@@ -337,45 +338,32 @@
 
 			$parsedBody = $req->getParsedBody();
 
-			if(isset($parsedBody['nom']) && isset($parsedBody['prenom']) && isset($parsedBody['mail']) && isset($parsedBody['date-livraison']))
-			{
-				//return Write::json_error($rs, code:400, message:'Manque un truc');
+			$com = new \lbs\common\models\Commande();
+			$com->id = Uuid::uuid1();
+			$com->nom = filter_var($parsedBody['nom_client'], FILTER_SANITIZE_STRING);
+			$com->mail = filter_var($parsedBody['mail_client'], FILTER_SANITIZE_STRING);
+			$com->etat = 1;
+			$com->date = $parsedBody['livraison']['date'];
+			$com->heure = $parsedBody['livraison']['heure'];
+			$com->token = bin2hex(random_bytes(32));
 
-				$com = new \lbs\common\models\Commande();
-				$com->nom = filter_var($parsedBody['nom'], FILTER_SANITIZE_STRING);
-				$com->prenom = filter_var($parsedBody['prenom'], FILTER_SANITIZE_STRING);
-				$com->mail = filter_var($parsedBody['mail'], FILTER_SANITIZE_STRING);
-				$com->livraison = $parsedBody['date-livraison'];
-				$com->token = uniqid();
-
-				try {
-					$com->save();
-				} catch(\Exception $e) {
-					echo 'erreur';
-				}
-
-				$resp= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
-
-				$resp= $resp->withStatus(201);
-
-				//$resp = $resp->withHeader('Location', $this->container['router']->pathFor('comid', ['id' => $com->id] ) );
-
-				$resp->getBody()->write(json_encode($com->toArray()));
-				return $resp;
+			try {
+				$com->save();
+			} catch(\Exception $e) {
+				echo 'erreur';
 			}
-			else
-			{
-				$resp= $resp->withStatus(400);
 
-				$temp = array("type" => "error", "error" => '400', "message" => "Donnée manquante");
-				
-				$resp->getBody()->write(json_encode($temp));
+			$resp= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
 
-				return $resp;
-			}
+			$resp= $resp->withStatus(201);
+
+			$resp = $resp->withHeader('Location', $this->container['router']->pathFor('comid', ['id' => $com->id] ) );
+
+			$tab = ['commande' => ['nom_client' => $com->nom, 'mail_client' => $com->mail, 'livraison' => ['date' => $com->date, 'heure' => $com->heure]], 'id' => $com->id, 'token' => $com->token];
+
+			$resp->getBody()->write(json_encode($tab));
+			return $resp;
 		}
-
-
 
 		public function getDescCommande($req, $resp, $args) {
 
@@ -388,6 +376,18 @@
 				$arr = $arr->where('id', '=', $args['id'])->firstOrFail();
 
 				$temp = array('type' => 'collection', 'meta' => ['locale' => 'fr-FR'], 'commande' => $arr);
+
+				if($arr->token != $req->getQueryParams()['token'])
+				{
+					$resp= $resp->withStatus(405);
+
+					$temp = array("type" => "error", "error" => '405', "message" => "Not allowed");
+					
+					$resp->getBody()->write(json_encode($temp));
+
+					return $resp;
+				}
+
 			}
 			catch(\Exception $e)
 			{
@@ -399,6 +399,7 @@
 			$rs->getBody()->write(json_encode($temp));
 
 			return $rs;
+
 
 		}
 
