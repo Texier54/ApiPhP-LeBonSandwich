@@ -154,11 +154,11 @@ $app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
 	}
 );
 
-	$validators = [
-	'nom_client'    => v::StringType()->alpha()->length(3,30) ,
-	'email_client'     => v::email() ,
-	'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' ),
-						'heure' =>v::date('h:i'),
+	$validatorsCommandes = [
+	'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
+	'email_client'     => v::email()->notEmpty(),
+	'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
+						'heure' =>v::date('h:i')->notEmpty(),
 	] ];
 
 $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
@@ -167,7 +167,24 @@ $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
 	return $c->getDescCommande($req, $resp, $args);
 	}
-)->setName('comid')->add('checkToken')->add(new Validation( $validators));
+)->setName('comid')->add('checkToken')->add(new Validation( $validatorsCommandes));
+
+
+
+	$validatorsComSand = [
+	'sandwich'   => [ 'id_sandwich' => v::digit()->notEmpty(),
+						'id_taille' =>v::digit()->notEmpty(),
+							'qte'    => v::digit()->notEmpty(),
+	] ];
+
+$app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\CatalogueController($this);
+
+	return $c->createItem($req, $resp, $args);
+	}
+)->add('checkToken')->add(new Validation( $validatorsComSand));
+
 
 $app->run();
  
