@@ -3,17 +3,21 @@
 
 require_once __DIR__.'/../src/vendor/autoload.php';
 
-$config = parse_ini_file('../src/conf/lbs.db.conf.ini');
-
-$db = new Illuminate\Database\Capsule\Manager();
-
-$db->addConnection( $config );
-$db->setAsGlobal();
-$db->bootEloquent();
-
-
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
+
+//Slim application instance
+$conf = ['settings' => ['displayErrorDetails' => true]];
+$app = new \Slim\App($conf);
+
+//Eloquent ORM settings
+require_once __DIR__.'/db.php';
+
+//Dependency Injection
+require_once __DIR__.'/dependencies.php';
+
+//Routes definitions
+require_once __DIR__.'/routes.php';
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \Respect\Validation\Validator as v;
@@ -21,10 +25,6 @@ use \DavidePastore\Slim\Validation\Validation as Validation;
 
 $error = require_once __DIR__.'/../src/conf/error.php';
 
-$conf = ['settings' => ['displayErrorDetails' => true]];
-
-//$conf = array_merge($conf, $error);
-$app = new \Slim\App($conf);
 
 
 
