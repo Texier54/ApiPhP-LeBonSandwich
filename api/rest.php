@@ -183,7 +183,26 @@ $app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, 
 
 	return $c->createItem($req, $resp, $args);
 	}
+);
+
+
+
+/**************************/
+/*     Carte fidelite     */
+/**************************/
+
+
+
+
+
+$app->get('/cartes/{id}/auth', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\AuthController($this);
+
+	return $c->authenticate($req, $resp, $args);
+	}
 )->add('checkToken')->add(new Validation( $validatorsComSand));
+
 
 
 $app->run();
