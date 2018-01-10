@@ -20,7 +20,7 @@
 			if(!$req->hasHeader('Authorization')) {
 
 				$rs = $rs->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
-
+				$resp= $resp->withStatus(401);
 				$temp = array("type" => "error", "error" => '401', "message" => "No Authorization in header");
 
 				$rs->getBody()->write(json_encode($temp));
@@ -39,15 +39,15 @@
 					->firstOrFail();
 
 				if(!password_verify($pass, $carte->passwd)) {
-					throw new \Exception("Mot de passe incorrect");
+					throw new \Exception("Authentification incorrecte");
 
 				}
 
 			} catch(\Exception $e){
 
 				$rs = $rs->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
-
-				$temp = array("type" => "error", "error" => '401', "message" => "No Authorization in header mdp");
+				$resp= $resp->withStatus(401);
+				$temp = array("type" => "error", "error" => '401', "message" => $e->getMessage());
 
 				$rs->getBody()->write(json_encode($temp));
 
