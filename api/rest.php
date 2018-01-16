@@ -201,7 +201,28 @@ $app->get('/cartes/{id}/auth', function (Request $req, Response $resp, $args) {
 
 	return $c->authenticate($req, $resp, $args);
 	}
-)->add('checkToken')->add(new Validation( $validatorsComSand));
+);
+
+
+
+
+$app->get('/cartes/{id}', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\AuthController($this);
+
+	return $c->getCarte($req, $resp, $args);
+	}
+);
+
+
+$app->post('/cartes/{id}/paiement', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\AuthController($this);
+
+	return $c->payerCarte($req, $resp, $args);
+	}
+);
+
 
 
 
