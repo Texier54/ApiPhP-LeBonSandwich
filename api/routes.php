@@ -21,3 +21,7 @@
 	];
 
 	$app->put('/commandes/{id}[/]', 'CommandeController:editCommande')->setName('put_command')->add(new Validation($commandeValidators));
+
+	$app->post('/cartes/{id}/auth', 'CarteController:authenticate')->setName('authenticate_carte');
+
+	$app->get('/cartes/{id}', 'CarteController:getCarte')->setName('get_carte');

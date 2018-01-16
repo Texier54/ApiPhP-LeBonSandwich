@@ -11,7 +11,7 @@
 # accès au service adminer : http://localhost:8080
 # accès au service mysql depuis le container api.public : utiliser le hostname "db"
 
-version: "3"
+version: "2"
 networks:
   lbs_network:
     driver: bridge
@@ -60,7 +60,7 @@ services:
      ports:
        - "8080:8080"
      networks:
-      - lbs_network
+       - lbs_network
      links:
        - mysql:db
 
