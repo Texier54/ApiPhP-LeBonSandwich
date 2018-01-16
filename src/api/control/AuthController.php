@@ -95,19 +95,19 @@
 				    "date_valide" => $carte->date_valide,
 				    "cumul" => $carte->cumul
 				]);
-			} catch(\ModelNotFoundException $ex){
+			} catch(\Illuminate\Database\Eloquent\ModelNotFoundException $ex){
 				return $response->withJson(array(
 					'type' => 'error',
 					'error' => 404,
 					'message' => 'Ressource non trouvée /cartes/'.$args['id']
 				), 404);
-			} catch(\SignatureInvalidException $ex){
+			} catch(\Firebase\JWT\SignatureInvalidException $ex){
 				return $response->withJson(array(
 					'type' => 'error',
 					'error' => 401,
 					'message' => 'JWT token non valide'
 				), 401);
-			} catch(\ExpiredException $ex){
+			} catch(\Firebase\JWT\ExpiredException $ex){
 				return $response->withJson(array(
 					'type' => 'error',
 					'error' => 401,
@@ -165,29 +165,41 @@
 				}
 
 
-			} catch(\ModelNotFoundException $ex){
+			} catch(\Illuminate\Database\Eloquent\ModelNotFoundException $ex){
 				return $response->withJson(array(
 					'type' => 'error',
 					'error' => 404,
 					'message' => 'Ressource non trouvée /cartes/'.$args['id']
 				), 404);
-			} catch(\SignatureInvalidException $ex){
+			} catch(\Firebase\JWT\SignatureInvalidException $ex){
 				return $response->withJson(array(
 					'type' => 'error',
 					'error' => 401,
 					'message' => 'JWT token non valide'
 				), 401);
-			} catch(\ExpiredException $ex){
+			} catch(\Firebase\JWT\ExpiredException $ex){
 				return $response->withJson(array(
 					'type' => 'error',
 					'error' => 401,
 					'message' => 'JWT token expiré'
 				), 401);
-			} catch(\BeforeValidException $ex){
+			} catch(\Firebase\JWT\BeforeValidException $ex){
 				return $response->withJson(array(
 					'type' => 'error',
 					'error' => 401,
 					'message' => 'token not yet valid'
+				), 401);
+			} catch(\DomainException $ex){
+				return $response->withJson(array(
+					'type' => 'error',
+					'error' => 401,
+					'message' => 'Domain Exception !!!!'
+				), 401);
+			} catch(\UnexpectedValueException $ex){
+				return $response->withJson(array(
+					'type' => 'error',
+					'error' => 401,
+					'message' => 'UnexpectedValueException'
 				), 401);
 			}
 		}

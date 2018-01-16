@@ -154,30 +154,12 @@ $app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
 	}
 );
 
-
-
-
-$app->post('/commandes/{id}/paiement', function (Request $req, Response $resp, $args) {
-
-	$c = new lbs\api\control\CatalogueController($this);
-
-	return $c->payerCommande($req, $resp, $args);
-	}
-)->add('checkToken');
-
-
-
-/*     Validator     */
-$validatorsCommandes = [
-'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
-'email_client'     => v::email()->notEmpty(),
-'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
-					'heure' =>v::date('h:i')->notEmpty(),
-] ];
-
-
-
-
+	$validatorsCommandes = [
+	'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
+	'email_client'     => v::email()->notEmpty(),
+	'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
+						'heure' =>v::date('h:i')->notEmpty(),
+	] ];
 
 $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
@@ -189,17 +171,11 @@ $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
 
 
-
-/*     Validator     */
-$validatorsComSand = [
-'sandwich'   => [ 'id_sandwich' => v::digit()->notEmpty(),
-					'id_taille' =>v::digit()->notEmpty(),
-						'qte'    => v::digit()->notEmpty(),
-] ];
-
-
-
-
+	$validatorsComSand = [
+	'sandwich'   => [ 'id_sandwich' => v::digit()->notEmpty(),
+						'id_taille' =>v::digit()->notEmpty(),
+							'qte'    => v::digit()->notEmpty(),
+	] ];
 
 $app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, $args) {
 
@@ -207,7 +183,7 @@ $app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, 
 
 	return $c->createItem($req, $resp, $args);
 	}
-)->add(new Validation( $validatorsCommandes))->add('checkToken');
+);
 
 
 

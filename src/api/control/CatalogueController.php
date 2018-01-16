@@ -379,6 +379,54 @@
 			}
 		}
 
+
+		public function payerCommande($req, $resp, $args) {
+
+
+			if ($req->getAttribute( 'has_errors' )) {
+
+				$resp= $resp->withStatus(400);
+
+				$temp = array("type" => "error", "error" => '400', "message" => "Donnée manquante");
+				
+				$resp->getBody()->write(json_encode($temp));
+
+				return $resp;	
+			} 
+			else {
+
+				$parsedBody = $req->getParsedBody();
+
+				if(isset($parsedBody['carte_bc']) && isset($parsedBody['date_expiration_bc']))
+				{
+
+					$com = \lbs\common\models\Commande::findOrFail($args['id']);
+
+					$com->etat = 1;
+					$com->save();
+
+					return $resp->withJson(array(
+						'type' => 'message',
+						'error' => 200,
+						'message' => 'Paiement accépté'
+					), 200);
+				}
+				else
+				{
+
+					$resp= $resp->withStatus(400);
+
+					$temp = array("type" => "error", "error" => '400', "message" => "Donnée manquante");
+					
+					$resp->getBody()->write(json_encode($temp));
+
+					return $resp;	
+				}
+
+			}
+
+		}
+
 		public function getDescCommande($req, $resp, $args) {
 
 			// ajoute ou remplace
