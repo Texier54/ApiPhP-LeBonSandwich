@@ -11,13 +11,13 @@ $conf = ['settings' => ['displayErrorDetails' => true]];
 $app = new \Slim\App($conf);
 
 //Eloquent ORM settings
-require_once __DIR__.'/db.php';
+require_once __DIR__.'/../src/config/db.php';
 
 //Dependency Injection
-require_once __DIR__.'/dependencies.php';
+require_once __DIR__.'/../src/config/api/dependencies.php';
 
 //Routes definitions
-require_once __DIR__.'/routes.php';
+require_once __DIR__.'/../src/config/api/routes.php';
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \Respect\Validation\Validator as v;
