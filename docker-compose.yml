@@ -59,6 +59,7 @@ services:
       - lbs_network
     links :
       - mysql:db
+      - api.public:api.public
 
 #############################
 # mysql + adminer / can be replaced by mariadb

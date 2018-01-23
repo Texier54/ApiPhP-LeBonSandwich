@@ -11,12 +11,13 @@ CREATE TABLE `carte` (
   `nom` varchar(60) NOT NULL,
   `passwd` varchar(60) NOT NULL,
   `cumul` int(11) NOT NULL,
-  `date-valide` datetime NOT NULL,
+  `date_valide` datetime NOT NULL,
+  `date_creation` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `carte` (`id`, `nom`, `passwd`, `cumul`, `date-valide`) VALUES
-(1,	'Jean',	'$2y$10$h0o2POjeB6LMiIsnl5263eKibEHYsWsWkpx2mW1hSbszrev05BGJq',	1,	'2018-01-09 16:43:09');
+INSERT INTO `carte` (`id`, `nom`, `passwd`, `cumul`, `date_valide`, `date_creation`) VALUES
+(1,	'Jean',	'$2y$10$h0o2POjeB6LMiIsnl5263eKibEHYsWsWkpx2mW1hSbszrev05BGJq',	6,	'2018-01-09 16:43:09',	'0000-00-00 00:00:00');
 
 DROP TABLE IF EXISTS `categorie`;
 CREATE TABLE `categorie` (
@@ -38,22 +39,7 @@ INSERT INTO `categorie` (`id`, `nom`, `description`) VALUES
 (19,	'seg',	'qzf'),
 (20,	'seg',	'qzf'),
 (21,	'seg',	'qzf'),
-(22,	'seg',	'qzf'),
-(23,	'seg',	'qzf'),
-(24,	'seg',	'qzf'),
-(25,	'test',	'test'),
-(26,	'test',	'test'),
-(27,	'test',	'test'),
-(28,	'test',	'test'),
-(29,	'test',	'test'),
-(30,	'test',	'test'),
-(31,	'test',	'test'),
-(32,	'test',	'test'),
-(33,	'test',	'test'),
-(34,	'test',	'test'),
-(35,	'test',	'test'),
-(36,	'test',	'test'),
-(37,	'test',	'test');
+(22,	'seg',	'qzf');
 
 DROP TABLE IF EXISTS `commande`;
 CREATE TABLE `commande` (
@@ -64,21 +50,24 @@ CREATE TABLE `commande` (
   `heure` varchar(80) NOT NULL,
   `etat` int(11) NOT NULL DEFAULT 1,
   `token` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `carte` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `carte` (`carte`),
+  CONSTRAINT `commande_ibfk_1` FOREIGN KEY (`carte`) REFERENCES `carte` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `commande` (`id`, `nom`, `mail`, `date`, `heure`, `etat`, `token`) VALUES
-('0de6fefa-e4c6-11e7-9237-d3c9327f12bc',	'testnom',	'test@test.fr',	'0000-00-00',	'00:00:00',	1,	'ebf870c716e3fb399ba50e7bc28971e811a991b600b1ebced7a7452f6c0e34b5'),
-('1',	'test',	'zfzfzfz',	'0000-00-00',	'00:00:00',	0,	NULL),
-('2',	'test',	'zfzfzfz',	'0000-00-00',	'00:00:00',	0,	'5a3253c040411'),
-('307a80ea-e4c6-11e7-bfb9-adbecf1255c8',	'jean mi',	'jm@gmail.com',	'7-12-2018',	'12:30',	1,	'7b0b8fc2469804f5ff808d3a1394e2308a914cf28bd17dc71106cd1a104d1017'),
-('34535864-f550-11e7-8bcf-cbd354ef0616',	'jean mi',	'jm@gmail.com',	'7-12-2018',	'12:30',	1,	'a9885adb0471bc441b06f3c61a20bd43057c85db6a9f12ceb5af6c1cbba26b37'),
-('56606a84-e4c8-11e7-b05a-11b0121c4e96',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'f471bfaa9b7da720ba616217f34d1a56f18e2ce9a3da5df64bb4cb1a306a58ed'),
-('6143bcda-e4c8-11e7-9afb-5d047c98e818',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'733c490afa24a84bbe9e47b3f740f1a07338c60ecc24120da33aec50cdf976bd'),
-('6257ab2c-e4c8-11e7-bf85-0334a6d52c2e',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'c9b46eafb89655c7a92387c872c22a5bfd220de2792eb43df156ae0707a8c5fb'),
-('7a34166a-e4c6-11e7-94eb-6f965c22b01b',	'testnom',	'test@test.fr',	'0000-00-00',	'00:00:00',	1,	'e035d2b1462cc1b5935567fdbc5d841ce94395fe01246c8307738219b47461cd'),
-('abd90832-e4c7-11e7-b7d4-eb345a0346f2',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'4251e0ff202660285e6325ebb26ec55b8f69bac6496236cbea3d67063d59252a'),
-('bf02de98-e4d5-11e7-9ab9-49f05b6f7eb6',	'jean mi',	'jm@gmal.com',	'7-12-2017',	'12:30',	1,	'7d7c649128501ce9d0dd28f2035a9ef4cffc856c6db01f032b7755ef33841735');
+INSERT INTO `commande` (`id`, `nom`, `mail`, `date`, `heure`, `etat`, `token`, `carte`) VALUES
+('0de6fefa-e4c6-11e7-9237-d3c9327f12bc',	'testnom',	'test@test.fr',	'0000-00-00',	'00:00:00',	1,	'ebf870c716e3fb399ba50e7bc28971e811a991b600b1ebced7a7452f6c0e34b5',	NULL),
+('1',	'test',	'zfzfzfz',	'0000-00-00',	'00:00:00',	0,	NULL,	NULL),
+('2',	'test',	'zfzfzfz',	'0000-00-00',	'00:00:00',	1,	'5a3253c040411',	NULL),
+('307a80ea-e4c6-11e7-bfb9-adbecf1255c8',	'jean mi',	'jm@gmail.com',	'7-12-2018',	'12:30',	1,	'7b0b8fc2469804f5ff808d3a1394e2308a914cf28bd17dc71106cd1a104d1017',	NULL),
+('34535864-f550-11e7-8bcf-cbd354ef0616',	'jean mi',	'jm@gmail.com',	'7-12-2018',	'12:30',	1,	'a9885adb0471bc441b06f3c61a20bd43057c85db6a9f12ceb5af6c1cbba26b37',	NULL),
+('56606a84-e4c8-11e7-b05a-11b0121c4e96',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'f471bfaa9b7da720ba616217f34d1a56f18e2ce9a3da5df64bb4cb1a306a58ed',	NULL),
+('6143bcda-e4c8-11e7-9afb-5d047c98e818',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'733c490afa24a84bbe9e47b3f740f1a07338c60ecc24120da33aec50cdf976bd',	NULL),
+('6257ab2c-e4c8-11e7-bf85-0334a6d52c2e',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'c9b46eafb89655c7a92387c872c22a5bfd220de2792eb43df156ae0707a8c5fb',	NULL),
+('7a34166a-e4c6-11e7-94eb-6f965c22b01b',	'testnom',	'test@test.fr',	'0000-00-00',	'00:00:00',	1,	'e035d2b1462cc1b5935567fdbc5d841ce94395fe01246c8307738219b47461cd',	NULL),
+('abd90832-e4c7-11e7-b7d4-eb345a0346f2',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'4251e0ff202660285e6325ebb26ec55b8f69bac6496236cbea3d67063d59252a',	NULL),
+('bf02de98-e4d5-11e7-9ab9-49f05b6f7eb6',	'jean mi',	'jm@gmal.com',	'7-12-2017',	'12:30',	1,	'7d7c649128501ce9d0dd28f2035a9ef4cffc856c6db01f032b7755ef33841735',	1);
 
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
@@ -278,5 +267,15 @@ INSERT INTO `tarif` (`taille_id`, `sand_id`, `prix`) VALUES
 (3,	6,	9.00),
 (4,	6,	12.00);
 
--- 2018-01-10 13:35:28
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pseudo` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `user` (`id`, `pseudo`, `password`) VALUES
+(1,	'Jean',	'$2y$10$h0o2POjeB6LMiIsnl5263eKibEHYsWsWkpx2mW1hSbszrev05BGJq');
+
+-- 2018-01-23 17:00:09

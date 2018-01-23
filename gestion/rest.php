@@ -1,7 +1,8 @@
 <?php
 
-
 require_once __DIR__.'/../src/vendor/autoload.php';
+
+session_start();
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -13,11 +14,6 @@ $app = new \Slim\App($conf);
 //Eloquent ORM settings
 require_once __DIR__.'/db.php';
 
-//Dependency Injection
-require_once __DIR__.'/dependencies.php';
-
-//Routes definitions
-require_once __DIR__.'/routes.php';
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \Respect\Validation\Validator as v;
@@ -26,205 +22,105 @@ use \DavidePastore\Slim\Validation\Validation as Validation;
 $error = require_once __DIR__.'/../src/conf/error.php';
 
 
+// Fetch DI Container
+$container = $app->getContainer();
 
+// Register Twig View helper
+$container['view'] = function ($c) {
+    $view = new \Slim\Views\Twig('./templates', [
+        'cache' => false
+    ]);
+    
+    // Instantiate and add Slim specific extension
+    $basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');
+    $view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
 
-function checkToken ( Request $rq, Response $rs, callable $next ) 
-{
-	// récupérer l'identifiant de cmmde dans la route et le token
-	$id = $rq->getAttribute('route')->getArgument( 'id');
-	$token = $rq->getQueryParam('token', null);
-
-	// vérifier que le token correspond à la commande
-	try 
-	{
-		\lbs\common\models\Commande::where('id', '=', $id)->where('token', '=',$token)->firstOrFail();
-
-	} catch (ModelNotFoundException $e) {
-
-		$rs= $rs->withStatus(404);
-
-		$temp = array("type" => "error", "error" => '404', "message" => "Le token n'est pas valide");
-			
-		$rs->getBody()->write(json_encode($temp));
-		return $rs;
-
-	};
-
-	return $next($rq, $rs);
+    return $view;
 };
 
 
 
-$app->get('/hello/{name}', function (Request $req, Response $resp, $args) {
-	$name = $args['name'];
-	$resp->getBody()->write("Hello, $name");
-	return $resp;
-	}
-);
 
-$app->get('/categories[/]', function (Request $req, Response $resp, $args) {
+// Define named route
+$app->get('/categorie/{id}', function ($request, $response, $args) {
 
-	$c = new lbs\api\control\CatalogueController($this);
-	return $c->getCategorie($req, $resp, $args);
-}
-);
+    $arr = new \lbs\common\models\Categorie();
 
-$app->get('/categories/{id}', function (Request $req, Response $resp, $args) {
+    $arr = $arr->where('id', '=', $args['id'])->firstOrFail();
+    $requete = $arr->sandwichs()->select('id', 'nom', 'type_pain')->get();
 
-	$c = new lbs\api\control\CatalogueController($this);
+    return $this->view->render($response, 'categorie.html.twig', [
+        'data' => $requete
+    ]);
+})->setName('categorie');
 
-	return $c->getDescCategorie($req, $resp, $args);
-	}
-)->setName('catid');
 
 
 
-$app->get('/sandwichs/{id}', function (Request $req, Response $resp, $args) {
+// Define named route
+$app->get('/connexion', function ($request, $response, $args) {
 
-	$c = new lbs\api\control\CatalogueController($this);
+    return $this->view->render($response, 'connexion.html.twig', []);
 
-	return $c->getDescSandwich($req, $resp, $args);
-	}
-)->setName('sandid');
+})->setName('connexion');
 
 
 
-$app->get('/sandwichs[/]', function (Request $req, Response $resp, $args) {
+// Define named route
+$app->post('/connexion', function ($request, $response, $args) {
 
-	$c = new lbs\api\control\CatalogueController($this);
+    $parsedBody = $request->getParsedBody();
+    $arr = new \lbs\common\models\User();
+            
+    if(isset($parsedBody['pseudo']) && isset($parsedBody['password']))
+    {
+        
+        try {
 
-	return $c->getSandwich($req, $resp, $args);
-	}
-);
+            $user = $arr->where('pseudo', '=', $parsedBody['pseudo'])->firstOrFail();
 
+            if(password_verify($parsedBody['password'], $user->password))
+            {
 
+                $_SESSION['pseudo'] = $user->pseudo;
 
-$app->post('/categories[/]', function (Request $req, Response $resp, $args) {
+                return $response->withRedirect('/liste');
+            }
+            else
+            {
+                return $this->view->render($response, 'connexion.html.twig', []);
+            }  
+        } catch(\Exception $e) {
+            return $this->view->render($response, 'connexion.html.twig', []);
+        }
 
-	$c = new lbs\control\CatalogueController($this);
 
-	return $c->createCategorie($req, $resp, $args);
-	}
-);
+    }
+    else 
+    {
+        return $this->view->render($response, 'connexion.html.twig', []);
+    }
 
-$app->put('/categories/{id}', function (Request $req, Response $resp, $args) {
 
-	$c = new lbs\api\control\CatalogueController($this);
+});
 
-	return $c->updateCategorie($req, $resp, $args);
-	}
-);
 
 
-$app->get('/categories/{id}/sandwichs', function (Request $req, Response $resp, $args) {
 
-	$c = new lbs\api\control\CatalogueController($this);
 
-	return $c->getSandwichFromCategorie($req, $resp, $args);
-	}
-)->setName('sandFromCat');
+$app->get('/liste[/]', function ($request, $response, $args) {
 
+    $arr = new \lbs\common\models\Categorie();
 
+    $requete = $arr->get();
 
-$app->get('/sandwichs/{id}/categories', function (Request $req, Response $resp, $args) {
+    return $this->view->render($response, 'index.html.twig', [
+        'data' => $requete
+    ]);
+})->setName('liste');
 
-	$c = new lbs\api\control\CatalogueController($this);
 
-	return $c->getCategorieFromSandwich($req, $resp, $args);
-	}
-)->setName('catFromSand');
 
 
-
-$app->get('/sandwichs/{id}/tailles', function (Request $req, Response $resp, $args) {
-
-	$c = new lbs\api\control\CatalogueController($this);
-
-	return $c->getTailleFromSandwich($req, $resp, $args);
-	}
-)->setName('tailleFromSand');
-
-
-
-$app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
-
-	$c = new lbs\api\control\CatalogueController($this);
-
-	return $c->createCommande($req, $resp, $args);
-	}
-);
-
-	$validatorsCommandes = [
-	'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
-	'email_client'     => v::email()->notEmpty(),
-	'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
-						'heure' =>v::date('h:i')->notEmpty(),
-	] ];
-
-$app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
-
-	$c = new lbs\api\control\CatalogueController($this);
-
-	return $c->getDescCommande($req, $resp, $args);
-	}
-)->setName('comid')->add('checkToken')->add(new Validation( $validatorsCommandes));
-
-
-
-	$validatorsComSand = [
-	'sandwich'   => [ 'id_sandwich' => v::digit()->notEmpty(),
-						'id_taille' =>v::digit()->notEmpty(),
-							'qte'    => v::digit()->notEmpty(),
-	] ];
-
-$app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, $args) {
-
-	$c = new lbs\api\control\CatalogueController($this);
-
-	return $c->createItem($req, $resp, $args);
-	}
-);
-
-
-
-/**************************/
-/*     Carte fidelite     */
-/**************************/
-
-
-
-
-
-$app->get('/cartes/{id}/auth', function (Request $req, Response $resp, $args) {
-
-	$c = new lbs\api\control\AuthController($this);
-
-	return $c->authenticate($req, $resp, $args);
-	}
-);
-
-
-
-
-$app->get('/cartes/{id}', function (Request $req, Response $resp, $args) {
-
-	$c = new lbs\api\control\AuthController($this);
-
-	return $c->getCarte($req, $resp, $args);
-	}
-);
-
-
-$app->post('/cartes/{id}/paiement', function (Request $req, Response $resp, $args) {
-
-	$c = new lbs\api\control\AuthController($this);
-
-	return $c->payerCarte($req, $resp, $args);
-	}
-);
-
-
-
-
+// Run app
 $app->run();
- 
