@@ -31,6 +31,8 @@ Configuration du fichier src/conf/lbs.db.conf.ini
 ## Autheurs
 
 * **Baptiste Texier** - *Lancement* - [Github](https://github.com/texier54)
+* **Islam Elshobokshy** - [Github](https://github.com/elshobokshy)
+* **alhasnecode** - [Github](https://github.com/alhasnecode)
 
 ## License
 
