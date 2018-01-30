@@ -23,8 +23,8 @@ services:
     environment:
       - VHOST_HOSTNAME=api.lbs.local
       - VHOST_DOCROOT=/var/www/api
-#     - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
-#     - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
     ports:
       - "10080:80"
       - "10443:443"
@@ -43,7 +43,7 @@ services:
       - VHOST_DOCROOT=/var/www/private
     ports:
       - "10090:80"
-      - "10444:443"
+      - "10445:443"
     volumes :
       - ./private:/var/www/private
       - ./src:/var/www/src
@@ -51,6 +51,31 @@ services:
       - lbs_network
     links :
       - mysql:db
+
+
+#############################
+# Backend de gestion
+#############################
+
+  api.gestion:
+    image: canals/php
+    container_name: gestion.lbs.local
+    environment:
+      - VHOST_HOSTNAME=gestion.lbs.local
+      - VHOST_DOCROOT=/var/www/gestion
+      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+    ports:
+      - "10081:80"
+      - "10444:443"
+    volumes :
+      - ./gestion:/var/www/gestion
+      - ./src:/var/www/src
+    networks:
+      - lbs_network
+    links :
+      - mysql:db
+      - api.public:api.public
 #############################
 # mysql + adminer / can be replaced by mariadb
 #############################

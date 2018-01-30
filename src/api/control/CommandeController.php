@@ -40,7 +40,7 @@ class CommandeController extends BaseController
 	// }
 
 	public function editCommande($request, $response, $args){
-		$commande = Commande::where('token', '=', $args['id'])->first();
+		$commande = Commande::where('id', '=', $args['id'])->first();
 
 		$requestBody = $request->getParsedBody();
 
@@ -54,16 +54,18 @@ class CommandeController extends BaseController
 			];
 			return $response->withJson($responseBody)->withStatus(400);
 		}else{
-			$commande->nom = $requestBody['nom'];
-			$commande->prenom = $requestBody['prenom'];
-			$commande->mail = $requestBody['mail'];
-			$commande->livraison = \Datetime::createFromFormat('d-m-Y H:i', $requestBody['livraison']);
+			$commande->nom = $requestBody['nom_client'];
+			$commande->mail = $requestBody['mail_client'];
+			//$commande->livraison = \Datetime::createFromFormat('d-m-Y H:i', $requestBody['livraison']);
+			$commande->date = $requestBody['livraison']['date'];
+			$commande->heure = $requestBody['livraison']['heure'];
 			$commande->save();
 
+			/*
 			$commande->livraison = [
 				"date" => date('d-m-Y', $commande->livraison->getTimestamp()),
 				"heure" => date('H:i', $commande->livraison->getTimestamp())
-			];
+			]; */
 
 			return $response->withStatus(201)->withJson([
 				"type" => "ressource",

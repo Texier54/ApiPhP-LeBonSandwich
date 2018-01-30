@@ -26,11 +26,15 @@ Configuration du fichier src/conf/lbs.db.conf.ini
 
 ## Fait avec
 
-* [Eloquent](https://laravel.com/docs/5.0/eloquent) - Framework PhP
+* [Slim](https://www.slimframework.com/) - Framework PhP
+* [Eloquent](https://laravel.com/docs/5.0/eloquent) - ORM
+* [Twig](https://twig.symfony.com/) - Template engine for PHP
 
 ## Autheurs
 
 * **Baptiste Texier** - *Lancement* - [Github](https://github.com/texier54)
+* **Islam Elshobokshy** - [Github](https://github.com/elshobokshy)
+* **alhasnecode** - [Github](https://github.com/alhasnecode)
 
 ## License
 

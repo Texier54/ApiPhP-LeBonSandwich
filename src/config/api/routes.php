@@ -13,15 +13,22 @@
 	// 	return $messages[$message];
 	// };
 
+/*
 	$commandeValidators = [
-		"mail" => v::notBlank()->email(),
-		"nom" => v::notBlank(),
-		"prenom" => v::notBlank(),
+		"nom_client" => v::notBlank(),
+		"mail_client" => v::notBlank()->email(),
 		"livraison" => v::date('d-m-Y H:i')->min('now')
-	];
-
-	$app->put('/commandes/{id}[/]', 'CommandeController:editCommande')->setName('put_command')->add(new Validation($commandeValidators));
+	]; */
 
 	$app->post('/cartes/{id}/auth', 'CarteController:authenticate')->setName('authenticate_carte');
 
 	$app->get('/cartes/{id}', 'CarteController:getCarte')->setName('get_carte');
+	
+	$validatorsCommandes = [
+	'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
+	'mail_client'     => v::email()->notEmpty(),
+	'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
+						'heure' =>v::date('h:i')->notEmpty(),
+	]];
+
+	$app->put('/commandes/{id}[/]', 'CommandeController:editCommande')->setName('put_command')->add(new Validation($validatorsCommandes));

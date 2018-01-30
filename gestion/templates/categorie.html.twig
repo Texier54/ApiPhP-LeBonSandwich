@@ -1,0 +1,40 @@
+{% extends "layout.html.twig" %}
+
+{% block body %}
+
+<!-- Page Content -->
+    <div class="container">
+
+      <!-- Jumbotron Header -->
+      <header class="jumbotron my-4">
+        <h1 class="display-3">Liste Sandwichs</h1>
+        <p class="lead">Desc</p>
+      </header>
+
+      <!-- Page Features -->
+      <div class="row text-center">
+
+        {% for sand in data %}
+	        <div class="col-lg-3 col-md-6 mb-4">
+	          <div class="card">
+	            <div class="card-body">
+	              <h4 class="card-title">{{ sand.nom }}</h4>
+	              <p class="card-text">{{ sand.type_pain }}</p>
+	            </div>
+	            <div class="card-footer">
+	              <a href="#" class="btn btn-primary">Modifier</a>
+                <a href="#" class="btn btn-danger">Supprimer</a>
+	            </div>
+	          </div>
+	        </div>
+        {% endfor %}
+
+
+
+      </div>
+      <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+{% endblock %}

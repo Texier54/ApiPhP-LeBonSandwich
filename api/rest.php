@@ -154,12 +154,30 @@ $app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
 	}
 );
 
-	$validatorsCommandes = [
-	'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
-	'email_client'     => v::email()->notEmpty(),
-	'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
-						'heure' =>v::date('h:i')->notEmpty(),
-	] ];
+
+
+
+$app->post('/commandes/{id}/paiement', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\CatalogueController($this);
+
+	return $c->payerCommande($req, $resp, $args);
+	}
+)->add('checkToken');
+
+
+
+/*     Validator     */
+$validatorsCommandes = [
+'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
+'email_client'     => v::email()->notEmpty(),
+'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
+					'heure' =>v::date('h:i')->notEmpty(),
+] ];
+
+
+
+
 
 $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
@@ -171,11 +189,17 @@ $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
 
 
-	$validatorsComSand = [
-	'sandwich'   => [ 'id_sandwich' => v::digit()->notEmpty(),
-						'id_taille' =>v::digit()->notEmpty(),
-							'qte'    => v::digit()->notEmpty(),
-	] ];
+
+/*     Validator     */
+$validatorsComSand = [
+'sandwich'   => [ 'id_sandwich' => v::digit()->notEmpty(),
+					'id_taille' =>v::digit()->notEmpty(),
+						'qte'    => v::digit()->notEmpty(),
+] ];
+
+
+
+
 
 $app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, $args) {
 
@@ -183,7 +207,47 @@ $app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, 
 
 	return $c->createItem($req, $resp, $args);
 	}
-)->add('checkToken')->add(new Validation( $validatorsComSand));
+)->add(new Validation( $validatorsCommandes))->add('checkToken');
+
+
+
+/**************************/
+/*     Carte fidelite     */
+/**************************/
+
+
+
+
+
+$app->get('/cartes/{id}/auth', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\AuthController($this);
+
+	return $c->authenticate($req, $resp, $args);
+	}
+);
+
+
+
+
+$app->get('/cartes/{id}', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\AuthController($this);
+
+	return $c->getCarte($req, $resp, $args);
+	}
+);
+
+
+$app->post('/cartes/{id}/paiement', function (Request $req, Response $resp, $args) {
+
+	$c = new lbs\api\control\AuthController($this);
+
+	return $c->payerCarte($req, $resp, $args);
+	}
+);
+
+
 
 
 $app->run();

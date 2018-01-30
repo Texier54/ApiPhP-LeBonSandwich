@@ -14,11 +14,10 @@ namespace lbs\common\models;
  * Class Categorie
  * @package catawish\models
  */
-class Carte extends \Illuminate\Database\Eloquent\Model {
+class User extends \Illuminate\Database\Eloquent\Model {
 
-    protected $table = 'carte';
+    protected $table = 'user';
     protected $primaryKey = 'id';
     public $timestamps = false;
-    public $incrementing = false;
 
 }
