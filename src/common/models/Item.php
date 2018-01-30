@@ -20,4 +20,16 @@ class Item extends \Illuminate\Database\Eloquent\Model {
     protected $primaryKey = 'id';
     public $timestamps = false;
 
+    public function commande(){
+    	return $this->belongsTo('lbs\common\models\Commande', 'id_commande');
+    }
+
+    public function taille(){
+    	return $this->belongsTo('lbs\common\models\Taille', 'id_taille_sandwich');
+    }
+
+    public function sandwich(){
+    	return $this->belongsTo('lbs\common\models\Sandwich', 'id_sandwich');
+    }
+
 }

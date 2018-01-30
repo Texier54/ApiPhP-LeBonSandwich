@@ -6,6 +6,10 @@
 		return new lbs\api\control\CommandeController($c);
 	};
 
+	$container['CarteController'] = function($c){
+		return new lbs\api\control\CarteController($c);
+	};
+
 	// $container['CategoryController'] = function($c){
 	// 	return new \lbs\control\CategoryController($c);
 	// };

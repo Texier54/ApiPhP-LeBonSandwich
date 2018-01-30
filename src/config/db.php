@@ -4,7 +4,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 $db = new Capsule;
 
-$config = parse_ini_file('../src/conf/lbs.db.conf.ini');
+$config = parse_ini_file(__DIR__.'/../conf/lbs.db.conf.ini');
 
 $db->addConnection($config);
 
