@@ -239,6 +239,10 @@
 				$url = $this->container['router']->pathFor('sandid', [ 'id' => $args['id'] ]);
 
 				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ".$url);
+
+				$rs->getBody()->write(json_encode($temp));
+
+				return $rs;
 			}
 
 			foreach ($requete as $key => $value) {
@@ -278,6 +282,10 @@
 				$url = $this->container['router']->pathFor('catid', [ 'id' => $args['id'] ]);
 
 				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ".$url);
+
+				$rs->getBody()->write(json_encode($temp));
+
+				return $rs;
 			}
 
 			foreach ($requete as $key => $value) {
@@ -315,6 +323,10 @@
 			catch(\Exception $e)
 			{
 				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ");
+
+				$rs->getBody()->write(json_encode($temp));
+
+				return $rs;
 			}
 
 			foreach ($requete as $key => $value) {
@@ -459,6 +471,10 @@
 				$url = $this->container['router']->pathFor('sandid', [ 'id' => $args['id'] ]);
 
 				$temp = array("type" => "error", "error" => '404', "message" => "ressource non disponible : ".$url);
+
+				$rs->getBody()->write(json_encode($temp));
+
+				return $rs;
 			}
 			
 			$rs->getBody()->write(json_encode($temp));

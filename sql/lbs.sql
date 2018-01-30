@@ -33,13 +33,7 @@ INSERT INTO `categorie` (`id`, `nom`, `description`) VALUES
 (3,	'traditionnel',	'sandwichs traditionnels : jambon, pâté, poulet etc ..'),
 (4,	'chaud',	'sandwichs chauds : américain, burger, '),
 (5,	'veggie',	'100% Veggie'),
-(16,	'world',	'Tacos, nems, burritos, nos sandwichs du monde entier'),
-(17,	'seg',	'qzf'),
-(18,	'seg',	'qzf'),
-(19,	'seg',	'qzf'),
-(20,	'seg',	'qzf'),
-(21,	'seg',	'qzf'),
-(22,	'seg',	'qzf');
+(16,	'world',	'Tacos, nems, burritos, nos sandwichs du monde entier');
 
 DROP TABLE IF EXISTS `commande`;
 CREATE TABLE `commande` (
@@ -51,23 +45,27 @@ CREATE TABLE `commande` (
   `etat` int(11) NOT NULL DEFAULT 1,
   `token` varchar(255) DEFAULT NULL,
   `carte` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `carte` (`carte`),
   CONSTRAINT `commande_ibfk_1` FOREIGN KEY (`carte`) REFERENCES `carte` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `commande` (`id`, `nom`, `mail`, `date`, `heure`, `etat`, `token`, `carte`) VALUES
-('0de6fefa-e4c6-11e7-9237-d3c9327f12bc',	'testnom',	'test@test.fr',	'0000-00-00',	'00:00:00',	1,	'ebf870c716e3fb399ba50e7bc28971e811a991b600b1ebced7a7452f6c0e34b5',	NULL),
-('1',	'test',	'zfzfzfz',	'0000-00-00',	'00:00:00',	0,	NULL,	NULL),
-('2',	'test',	'zfzfzfz',	'0000-00-00',	'00:00:00',	1,	'5a3253c040411',	NULL),
-('307a80ea-e4c6-11e7-bfb9-adbecf1255c8',	'jean mi',	'jm@gmail.com',	'7-12-2018',	'12:30',	1,	'7b0b8fc2469804f5ff808d3a1394e2308a914cf28bd17dc71106cd1a104d1017',	NULL),
-('34535864-f550-11e7-8bcf-cbd354ef0616',	'jean mi',	'jm@gmail.com',	'7-12-2018',	'12:30',	1,	'a9885adb0471bc441b06f3c61a20bd43057c85db6a9f12ceb5af6c1cbba26b37',	NULL),
-('56606a84-e4c8-11e7-b05a-11b0121c4e96',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'f471bfaa9b7da720ba616217f34d1a56f18e2ce9a3da5df64bb4cb1a306a58ed',	NULL),
-('6143bcda-e4c8-11e7-9afb-5d047c98e818',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'733c490afa24a84bbe9e47b3f740f1a07338c60ecc24120da33aec50cdf976bd',	NULL),
-('6257ab2c-e4c8-11e7-bf85-0334a6d52c2e',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'c9b46eafb89655c7a92387c872c22a5bfd220de2792eb43df156ae0707a8c5fb',	NULL),
-('7a34166a-e4c6-11e7-94eb-6f965c22b01b',	'testnom',	'test@test.fr',	'0000-00-00',	'00:00:00',	1,	'e035d2b1462cc1b5935567fdbc5d841ce94395fe01246c8307738219b47461cd',	NULL),
-('abd90832-e4c7-11e7-b7d4-eb345a0346f2',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'4251e0ff202660285e6325ebb26ec55b8f69bac6496236cbea3d67063d59252a',	NULL),
-('bf02de98-e4d5-11e7-9ab9-49f05b6f7eb6',	'jean mi',	'jm@gmal.com',	'7-12-2017',	'12:30',	1,	'7d7c649128501ce9d0dd28f2035a9ef4cffc856c6db01f032b7755ef33841735',	1);
+INSERT INTO `commande` (`id`, `nom`, `mail`, `date`, `heure`, `etat`, `token`, `carte`, `created_at`, `updated_at`) VALUES
+('02044dd4-05cf-11e8-8fb9-c936ddbc93c0',	'zdfzf',	'zdzfzf',	'10-10-2020',	'10:20',	1,	'd3b971bcc17ce465ffa868db04b2497607563a7747183506b9920fca6357cdcc',	NULL,	'2018-01-30 15:05:28',	'2018-01-30 15:05:28'),
+('0de6fefa-e4c6-11e7-9237-d3c9327f12bc',	'testnom',	'test@test.fr',	'0000-00-00',	'00:00:00',	1,	'ebf870c716e3fb399ba50e7bc28971e811a991b600b1ebced7a7452f6c0e34b5',	NULL,	NULL,	NULL),
+('1',	'test',	'zfzfzfz',	'0000-00-00',	'00:00:00',	0,	NULL,	NULL,	NULL,	NULL),
+('16c248ca-05cf-11e8-bd47-f90fea143e43',	'jean mizqfzqfqzfzqf',	'jm@gmal.com',	'07-12-2017',	'12:30',	1,	'e0383d83debba6560b9b1f83380aad358ac047a75f257119940cd3e4359361be',	NULL,	'2018-01-30 15:06:03',	'2018-01-30 15:06:03'),
+('2',	'jean',	'jm@gmal.com',	'07-12-2019',	'12:30',	1,	'5a3253c040411',	NULL,	NULL,	'2018-01-30 15:16:46'),
+('307a80ea-e4c6-11e7-bfb9-adbecf1255c8',	'jean mi',	'jm@gmail.com',	'7-12-2018',	'12:30',	1,	'7b0b8fc2469804f5ff808d3a1394e2308a914cf28bd17dc71106cd1a104d1017',	NULL,	NULL,	NULL),
+('34535864-f550-11e7-8bcf-cbd354ef0616',	'jean mi',	'jm@gmail.com',	'7-12-2018',	'12:30',	1,	'a9885adb0471bc441b06f3c61a20bd43057c85db6a9f12ceb5af6c1cbba26b37',	NULL,	NULL,	NULL),
+('56606a84-e4c8-11e7-b05a-11b0121c4e96',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'f471bfaa9b7da720ba616217f34d1a56f18e2ce9a3da5df64bb4cb1a306a58ed',	NULL,	NULL,	NULL),
+('6143bcda-e4c8-11e7-9afb-5d047c98e818',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'733c490afa24a84bbe9e47b3f740f1a07338c60ecc24120da33aec50cdf976bd',	NULL,	NULL,	NULL),
+('6257ab2c-e4c8-11e7-bf85-0334a6d52c2e',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'c9b46eafb89655c7a92387c872c22a5bfd220de2792eb43df156ae0707a8c5fb',	NULL,	NULL,	NULL),
+('7a34166a-e4c6-11e7-94eb-6f965c22b01b',	'testnom',	'test@test.fr',	'0000-00-00',	'00:00:00',	1,	'e035d2b1462cc1b5935567fdbc5d841ce94395fe01246c8307738219b47461cd',	NULL,	NULL,	NULL),
+('abd90832-e4c7-11e7-b7d4-eb345a0346f2',	'testnom',	'test@test.fr',	'20-12-2017',	'14:20',	1,	'4251e0ff202660285e6325ebb26ec55b8f69bac6496236cbea3d67063d59252a',	NULL,	NULL,	NULL),
+('b37ca5ba-05d0-11e8-ae96-6929a53b463d',	'jean',	'jm@gmal.com',	'07-12-2019',	'12:30',	1,	'f24eece74a4471bfc7ef17fa2f38b3d8a8485d8f46893ece21e37335df7d347a',	NULL,	'2018-01-30 15:17:35',	'2018-01-30 15:17:35');
 
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
@@ -230,7 +228,11 @@ INSERT INTO `sandwich` (`id`, `nom`, `description`, `type_pain`, `img`) VALUES
 (113,	'aut-dolorem',	'Consequuntur temporibus dolor quibusdam iure fuga est. Ut unde suscipit corrupti odio dolores velit. Aut aut quis qui non dolorem voluptatem qui.',	'tortillas',	NULL),
 (114,	'accusamus-voluptas',	'Rerum et in quis voluptas. Hic fugiat nobis maxime suscipit eligendi rerum. Dolorum officia nihil asperiores ipsa.',	'pain complet',	NULL),
 (115,	'est-excepturi',	'Sunt voluptatem est autem dolorem qui expedita. Dolores qui quis nam et officiis dolor. Sunt ratione quia in at est omnis temporibus.',	'tortillas',	NULL),
-(116,	'délice de la mer',	'le bon sandwich au saumon',	'mie',	NULL);
+(116,	'délice de la mer',	'le bon sandwich au saumon',	'mie',	NULL),
+(117,	'qzfzq',	'qzfqzf',	'qzf',	''),
+(118,	'qzfqs',	'fsfsfsfsf',	'dg',	''),
+(119,	'qzf',	'sfsfsfsf',	'sf',	''),
+(120,	'qzfq',	'ssf',	'sdsf',	'');
 
 DROP TABLE IF EXISTS `taille_sandwich`;
 CREATE TABLE `taille_sandwich` (
@@ -278,4 +280,4 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `pseudo`, `password`) VALUES
 (1,	'Jean',	'$2y$10$h0o2POjeB6LMiIsnl5263eKibEHYsWsWkpx2mW1hSbszrev05BGJq');
 
--- 2018-01-23 17:00:09
+-- 2018-01-30 16:59:32

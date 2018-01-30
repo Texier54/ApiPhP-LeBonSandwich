@@ -241,6 +241,19 @@ $app->post('/cartes/{id}/paiement', function (Request $req, Response $resp, $arg
 
 
 
+/* Validator */
+$validatorsCreateCart = [
+    'nom' => v::notEmpty(),
+    'password' =>v::notEmpty(),
+];
+
+
+$app->post('/cartes[/]', function (Request $req, Response $resp, $args) {
+    $c = new lbs\api\control\AuthController($this);
+    return $c->createCard($req, $resp, $args);
+    }
+)->add(new Validation( $validatorsCreateCart));
+
 
 $app->run();
  

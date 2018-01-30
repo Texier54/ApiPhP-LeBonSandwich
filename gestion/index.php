@@ -38,8 +38,15 @@ $container['view'] = function ($c) {
     return $view;
 };
 
+$container['csrf'] = function ($c) {
+    return new \Slim\Csrf\Guard;
+};
 
 
+
+/************************************
+        Routes
+*************************************/
 
 
 $app->get('/', function ($request, $response, $args) {
@@ -108,7 +115,7 @@ $app->get('/deconnexion', function ($request, $response, $args) {
 
 
 
-// Define named route
+
 $app->post('/connexion', function ($request, $response, $args) {
 
     $parsedBody = $request->getParsedBody();
@@ -143,8 +150,74 @@ $app->post('/connexion', function ($request, $response, $args) {
         return $this->view->render($response, 'connexion.html.twig', []);
     }
 
-
 });
+
+
+
+
+$app->get('/add_sandwich', function ($request, $response, $args) {
+
+    if(!isset($_SESSION['pseudo']))
+        return $response->withRedirect($this->router->pathFor('liste'), 301);
+
+    if($_SESSION['pseudo'])
+        $session = true;
+    else
+        $session = false;
+
+
+    $arr = new \lbs\common\models\Categorie();
+    $requetecateg = $arr->get();
+
+    $arr = new \lbs\common\models\Taille();
+    $requetetaille= $arr->get();
+
+
+    $nameKey = $this->csrf->getTokenNameKey();
+    $valueKey = $this->csrf->getTokenValueKey();
+    $name = $request->getAttribute($nameKey);
+    $value = $request->getAttribute($valueKey);
+
+    return $this->view->render($response, 'addsand.html.twig', [
+        'datacateg' => $requetecateg,
+        'datataille' => $requetetaille,
+        'session' => $session,
+        'token' => $token,
+        'nameKey' => $nameKey,
+        'valueKey' => $valueKey,
+        'name' => $name,
+        'value' => $value,
+    ]);
+
+})->setName('addsand')->add($container->get('csrf'));
+
+
+
+
+$app->post('/add_sandwich', function ($request, $response, $args) {
+
+    if(!isset($_SESSION['pseudo']))
+        return $response->withRedirect($this->router->pathFor('liste'), 301);
+
+    if($_SESSION['pseudo'])
+        $session = true;
+    else
+        $session = false;
+
+
+    $sand = new \lbs\common\models\Sandwich();
+
+    $sand->nom = $_POST['nom'];
+    $sand->description = $_POST['description'];
+    $sand->type_pain = $_POST['type'];
+    $sand->img = $_POST['img'];
+    $sand->save();
+
+    return $response->withRedirect($this->router->pathFor('liste'), 301);
+
+
+})->add($container->get('csrf'));
+
 
 
 // Run app

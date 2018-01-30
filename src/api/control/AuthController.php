@@ -204,4 +204,42 @@
 			}
 		}
 
-	}
+		public function createCard($request, $response, $args){
+
+	        if ($request->getAttribute( 'has_errors' )) {
+	            $response= $response->withStatus(400);
+	            $temp = array("type" => "error", "error" => '400', "message" => "Donnée manquante");
+	            
+	            $response->getBody()->write(json_encode($temp));
+	            return $response;   
+	        } 
+	        else {
+	            $parsedBody = $request->getParsedBody();
+	            $carte = new \lbs\common\models\Carte();
+	            $carte->nom = $parsedBody['nom'];
+	            $carte->passwd = password_hash($parsedBody['password'], PASSWORD_DEFAULT);
+		        $carte->cumul = '0';
+		        $carte->date_creation = (new \Datetime())->format('Y-m-d H:i:s');
+		        $carte->date_valide = (new \Datetime())->modify('+1 year')->format('Y-m-d H:i:s');
+		                
+	            try {
+	                $carte->save();
+	            } catch(\Exception $e) {
+	                echo $e->getmessage();
+				}
+				
+                $response= $response->withHeader( 'Content-type', "application/json;charset=utf-8");
+                $response= $response->withStatus(201);
+                $tab = [
+                    'id' => $carte->id,
+                    'nom' => $carte->nom,
+                    'cumule' => $carte->cumul,
+                    'date de validité' => $carte->date_valide,
+                    'date de création' => $carte->date_creation
+                ];
+                $response->getBody()->write(json_encode($tab));
+                return $response;
+            }
+        }
+
+}
