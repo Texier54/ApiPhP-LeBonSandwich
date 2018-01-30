@@ -21,6 +21,12 @@ class Commande extends \Illuminate\Database\Eloquent\Model {
     public $timestamps = true;
     public $incrementing = false;
     public $keyType = 'string';
+    protected $fillable = [
+    	'nom',
+    	'date',
+    	'heure',
+    	'mail'
+    ];
 
     public function items(){
     	return $this->hasMany('lbs\common\models\Item', 'id_commande');

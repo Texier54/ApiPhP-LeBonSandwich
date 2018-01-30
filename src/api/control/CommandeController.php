@@ -40,7 +40,7 @@ class CommandeController extends BaseController
 	// }
 
 	public function editCommande($request, $response, $args){
-		$commande = Commande::where('id', '=', $args['id'])->first();
+		$commande =  \lbs\common\models\Commande::where('id', '=', $args['id'])->first();
 
 		$requestBody = $request->getParsedBody();
 

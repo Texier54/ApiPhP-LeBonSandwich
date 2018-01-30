@@ -41,6 +41,8 @@ function checkToken ( Request $rq, Response $rs, callable $next )
 
 	} catch (ModelNotFoundException $e) {
 
+		$rs= $rs->withHeader( 'Content-type', "application/json;charset=utf-8");
+
 		$rs= $rs->withStatus(404);
 
 		$temp = array("type" => "error", "error" => '404', "message" => "Le token n'est pas valide");
@@ -53,14 +55,6 @@ function checkToken ( Request $rq, Response $rs, callable $next )
 	return $next($rq, $rs);
 };
 
-
-
-$app->get('/hello/{name}', function (Request $req, Response $resp, $args) {
-	$name = $args['name'];
-	$resp->getBody()->write("Hello, $name");
-	return $resp;
-	}
-);
 
 $app->get('/categories[/]', function (Request $req, Response $resp, $args) {
 
@@ -146,13 +140,23 @@ $app->get('/sandwichs/{id}/tailles', function (Request $req, Response $resp, $ar
 
 
 
+/*     Validator     */
+$validatorsCommandes = [
+'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
+'mail_client'     => v::email()->notEmpty(),
+'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
+					'heure' =>v::date('h:i')->notEmpty(),
+] ];
+
+
+
 $app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
 
 	$c = new lbs\api\control\CatalogueController($this);
 
 	return $c->createCommande($req, $resp, $args);
 	}
-);
+)->add(new Validation( $validatorsCommandes));
 
 
 
@@ -167,25 +171,13 @@ $app->post('/commandes/{id}/paiement', function (Request $req, Response $resp, $
 
 
 
-/*     Validator     */
-$validatorsCommandes = [
-'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
-'email_client'     => v::email()->notEmpty(),
-'livraison'   => [ 'date' => v::date('d-m-Y')->min( 'now' )->notEmpty(),
-					'heure' =>v::date('h:i')->notEmpty(),
-] ];
-
-
-
-
-
 $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
 	$c = new lbs\api\control\CatalogueController($this);
 
 	return $c->getDescCommande($req, $resp, $args);
 	}
-)->setName('comid')->add('checkToken')->add(new Validation( $validatorsCommandes));
+)->setName('comid');
 
 
 

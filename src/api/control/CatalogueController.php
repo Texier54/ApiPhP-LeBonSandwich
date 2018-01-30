@@ -441,6 +441,9 @@
 
 				if($arr->token != $req->getQueryParams()['token'])
 				{
+
+					$resp= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+
 					$resp= $resp->withStatus(405);
 
 					$temp = array("type" => "error", "error" => '405', "message" => "Not allowed");

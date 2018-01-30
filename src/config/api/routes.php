@@ -20,9 +20,6 @@
 		"livraison" => v::date('d-m-Y H:i')->min('now')
 	]; */
 
-	$app->post('/cartes/{id}/auth', 'CarteController:authenticate')->setName('authenticate_carte');
-
-	$app->get('/cartes/{id}', 'CarteController:getCarte')->setName('get_carte');
 	
 	$validatorsCommandes = [
 	'nom_client'    => v::StringType()->alpha()->length(3,30)->notEmpty(),
