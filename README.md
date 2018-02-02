@@ -4,12 +4,11 @@
 
 Ces instructions vous permettront d'obtenir une copie du projet opérationnel sur votre machine locale à des fins de développement et de test. Voir déploiement pour les notes sur la façon de déployer le projet sur un système actif.
 
----
-Requetes api public : api.lbs.local:10080
----
-Requete api privée : private.lbs.local:10090
----
-Backeng de gestion : gestion.lbs.local:10081
+**Requetes api public :** api.lbs.local:10080
+
+**Requete api privée :** private.lbs.local:10090
+
+**Backeng de gestion :** gestion.lbs.local:10081
 
 
 ### Prérequis
