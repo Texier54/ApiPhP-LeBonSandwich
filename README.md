@@ -4,6 +4,11 @@
 
 Ces instructions vous permettront d'obtenir une copie du projet opérationnel sur votre machine locale à des fins de développement et de test. Voir déploiement pour les notes sur la façon de déployer le projet sur un système actif.
 
+Requetes api public : api.lbs.local:10080
+Requete api privée : private.lbs.local:10090
+Backeng de gestion : gestion.lbs.local:10081
+
+
 ### Prérequis
 
 Nécéssite Eloquent
@@ -17,11 +22,19 @@ Clone le depot git — git clone https://github.com/Texier54/LeBonSandwich
 ```
 
 ```
-Importation de la BDD /sql
+Importation de la BDD /sql/lbs.sql
 ```
 
 ```
 Configuration du fichier src/conf/lbs.db.conf.ini
+```
+
+```
+docker-compose up
+```
+
+```
+docker-compose start
 ```
 
 ## Fait avec
