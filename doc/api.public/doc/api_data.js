@@ -1,4 +1,312 @@
-[
+define({ "api": [
+  {
+    "type": "get",
+    "url": "/cartes/{id}/auth",
+    "title": "authentification",
+    "group": "Cartes",
+    "name": "AuthentificationCartes",
+    "version": "0.1.0",
+    "description": "<p>Accès à une ressource de type cartes : permet d'accéder à la représentation de la ressource sandwichs et ces tailles disponibles. Retourne une représentation json de la ressource, incluant son nom, prix, et son pivot.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Identifiant unique de la catégorie</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Succès : 200": [
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>type de la réponse, ici resource</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Object",
+            "optional": false,
+            "field": "auth",
+            "description": "<p>la ressource auth retournée</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "auth.id",
+            "description": "<p>Identifiant de l'auth</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "auth.nom",
+            "description": "<p>Nom de l'auth</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "auth.passwd",
+            "description": "<p>Mot de passe de l'auth</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas de succès",
+          "content": "HTTP/1.1 200 OK\n\n{\n   \"type\" : \"collection,\n   \"id\"  : \"1\",\n   \"nom\" : \"jean\",\n   \"passwd\" : \"jeanforlife\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Erreur : 404": [
+          {
+            "group": "Erreur : 404",
+            "optional": false,
+            "field": "MissingParameter",
+            "description": "<p>paramètre manquant dans la requête</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas d'erreur",
+          "content": "HTTP/1.1 404 Not Found\n\n{\n  \"type\" : \"error\",\n  \"error\" : 404,\n  \"message\" : \"ressource non disponible : /cartes/{id}/auth\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./rest.php",
+    "groupTitle": "Cartes"
+  },
+  {
+    "type": "post",
+    "url": "/cartes/{id}/paiement",
+    "title": "payer avec la carte",
+    "group": "Cartes",
+    "name": "BuyWithCard",
+    "version": "0.1.0",
+    "description": "<p>Création d'une ressource de type cartes. La commande à été ajouter payer avec la carte. Le numéro de la carte bancaire et sa date d'expiration doivent être fournis. La réponse retournée indique le cumul ajouté de la nouvelle ressource.</p>",
+    "parameter": {
+      "fields": {
+        "request parameters": [
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "carte_bc",
+            "description": "<p>Numéro de la carte bancaire</p>"
+          },
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "date_expiration_bc",
+            "description": "<p>Date d'expiration de la carte bancaire</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de paramètres",
+          "content": "{\n\t\t\"carte_bc\"  : \"5454693217981245\",\n\t\t\"date_expiration_bc\"  : \"975\"\n}",
+          "type": "request"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Réponse : 200": [
+          {
+            "group": "Réponse : 200",
+            "type": "json",
+            "optional": false,
+            "field": "commande",
+            "description": "<p>Paiement accépté</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas de succès",
+          "content": "   POST /cartes/{id}/paiement HTTP/1.1\n   Host: api.lbs.local\n   Content-Type: application/json;charset=utf8\n\t  Location: /cartes/e3786989-e0d2-4cfb-a72f-455ca4a16beb/paiement\n\n   {\n    \t\t\"carte_bc\"  : \"5454693217981245\",\n    \t\t\"date_expiration_bc\"  : \"975\"\n    }",
+          "type": "response"
+        }
+      ]
+    },
+    "header": {
+      "fields": {
+        "response headers": [
+          {
+            "group": "response headers",
+            "type": "String",
+            "optional": false,
+            "field": "Location:",
+            "description": "<p>uri de la ressource créée et l'id</p>"
+          },
+          {
+            "group": "response headers",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type:",
+            "description": "<p>format de représentation de la ressource réponse</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Réponse : 400": [
+          {
+            "group": "Réponse : 400",
+            "optional": false,
+            "field": "MissingParameter",
+            "description": "<p>paramètre manquant dans la requête</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas d'erreur",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"type\": \"error\",\n  \"error\" : 400,\n  \"message\" : \"donnée manquante (description)\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./rest.php",
+    "groupTitle": "Cartes"
+  },
+  {
+    "type": "get",
+    "url": "/cartes/{id}",
+    "title": "accéder à une carte",
+    "group": "Cartes",
+    "name": "GetCartes",
+    "version": "0.1.0",
+    "description": "<p>Accès à une ressource de type carte : permet d'accéder à la représentation de la ressource carte. Retourne une représentation json de la ressource, incluant son nom, mail, date, et son pivot.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Identifiant unique de la catégorie</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Succès : 200": [
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>type de la réponse, ici resource</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Object",
+            "optional": false,
+            "field": "meta",
+            "description": "<p>méta-données sur la réponse</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Tring",
+            "optional": false,
+            "field": "meta.locale",
+            "description": "<p>langue de la réponse</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Object",
+            "optional": false,
+            "field": "carte",
+            "description": "<p>la ressource carte retournée</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "carte.id",
+            "description": "<p>Identifiant de la carte</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "carte.date_creation",
+            "description": "<p>Date de création de la carte</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "carte.date_valide",
+            "description": "<p>Date de validité de la carte</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "carte.cumul",
+            "description": "<p>Cumul de la carte</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas de succès",
+          "content": "HTTP/1.1 200 OK\n\n{\n   \"type\" : \"collection,\n   \"meta\" ; { \"locale\":\"fr-FR\" },\n   \"carte\" : {\n      \"id\"  : \"1\",\n      \"date_creation\" : \"0000-00-00\",\n      \"date_valide\" : 0000-00-00\",\n      \"cumul\" : \"23\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Erreur : 401": [
+          {
+            "group": "Erreur : 401",
+            "optional": false,
+            "field": "RefusedAccess",
+            "description": "<p>accès refusé à la ressource</p>"
+          }
+        ],
+        "Erreur : 404": [
+          {
+            "group": "Erreur : 404",
+            "optional": false,
+            "field": "MissingParameter",
+            "description": "<p>paramètre manquant dans la requête</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas d'erreur",
+          "content": "HTTP/1.1 404 Not Found\n\n{\n  \"type\" : \"error\",\n  \"error\" : 404,\n  \"message\" : \"ressource non disponible : /cartes/{id}\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./rest.php",
+    "groupTitle": "Cartes"
+  },
   {
     "type": "post",
     "url": "/categories/",
@@ -877,6 +1185,475 @@
     "groupTitle": "Categories"
   },
   {
+    "type": "post",
+    "url": "/commandes/",
+    "title": "créer une commande",
+    "group": "Commandes",
+    "name": "CreateCommandes",
+    "version": "0.1.0",
+    "description": "<p>Création d'une ressource de type commandes. La commande est ajoutée dans la base, son identifiant et token sont créé. Le nom du client, la description du client et la date et heure de la commande doivent être fournis. La réponse retournée indique l'id et le token de la nouvelle ressource et contient.</p>",
+    "parameter": {
+      "fields": {
+        "request parameters": [
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "nom_cient",
+            "description": "<p>Nom du client de la commande</p>"
+          },
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "mail_client",
+            "description": "<p>Mail du client de la commande</p>"
+          },
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "livraison",
+            "description": "<p>la ressource livraison fournis</p>"
+          },
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "livraison.date",
+            "description": "<p>date de la commande</p>"
+          },
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "livraison.heure",
+            "description": "<p>heure de la commande</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de paramètres",
+          "content": "    {\n      \"nom_client\"  : \"jean mi\",\n      \"mail_client\" : \"jm@gmal.com\",\n\t\t \"livraison\"   : {\n\t\t\t\"date\"\t: \"7-12-2017\",\n\t\t\t\"heure\" : \"12:30\"\n\t\t }\n    }",
+          "type": "request"
+        }
+      ]
+    },
+    "header": {
+      "fields": {
+        "request headers": [
+          {
+            "group": "request headers",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type:",
+            "defaultValue": "application/json",
+            "description": "<p>format utilisé pour les données transmises</p>"
+          }
+        ],
+        "response headers": [
+          {
+            "group": "response headers",
+            "type": "String",
+            "optional": false,
+            "field": "Location:",
+            "description": "<p>uri de la ressource créée et l'id</p>"
+          },
+          {
+            "group": "response headers",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type:",
+            "description": "<p>format de représentation de la ressource réponse</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Réponse : 201": [
+          {
+            "group": "Réponse : 201",
+            "type": "json",
+            "optional": false,
+            "field": "commande",
+            "description": "<p>représentation json de la nouvelle commande</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas de succès",
+          "content": "    POST /commandes/ HTTP/1.1\n   Host: api.lbs.local\n   Content-Type: application/json;charset=utf8\n\t  Location: /commandes/e3786989-e0d2-4cfb-a72f-455ca4a16beb\n\n   {\n      \"nom_client\"  : \"jean mi\",\n      \"mail_client\" : \"jm@gmal.com\",\n\t\t \"livraison\"   : {\n\t\t\t\"date\"\t: \"7-12-2017\",\n\t\t\t\"heure\" : \"12:30\"\n\t\t }\n    }",
+          "type": "response"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Réponse : 400": [
+          {
+            "group": "Réponse : 400",
+            "optional": false,
+            "field": "MissingParameter",
+            "description": "<p>paramètre manquant dans la requête</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas d'erreur",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"type\": \"error\",\n  \"error\" : 400,\n  \"message\" : \"donnée manquante (description)\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./rest.php",
+    "groupTitle": "Commandes"
+  },
+  {
+    "type": "get",
+    "url": "/commandes/{id}",
+    "title": "accéder à une commande",
+    "group": "Commandes",
+    "name": "GetCommandes",
+    "version": "0.1.0",
+    "description": "<p>Accès à une ressource de type commande : permet d'accéder à la représentation de la ressource commande. Retourne une représentation json de la ressource, incluant son nom, mail, date, et son pivot.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Identifiant unique de la catégorie</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Succès : 200": [
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>type de la réponse, ici resource</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Object",
+            "optional": false,
+            "field": "meta",
+            "description": "<p>méta-données sur la réponse</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Tring",
+            "optional": false,
+            "field": "meta.locale",
+            "description": "<p>langue de la réponse</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Object",
+            "optional": false,
+            "field": "commande",
+            "description": "<p>la ressource commande retournée</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "commande.id",
+            "description": "<p>Identifiant de la commande</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "commande.nom",
+            "description": "<p>Nom de la commande</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "String",
+            "optional": false,
+            "field": "commande.mail",
+            "description": "<p>Mail de la commande</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "commande.date",
+            "description": "<p>Date de la commande</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "commande.heure",
+            "description": "<p>Heure de la commande</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "commande.etat",
+            "description": "<p>Etat de la commande</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "commande.token",
+            "description": "<p>Token de la commande</p>"
+          },
+          {
+            "group": "Succès : 200",
+            "type": "Number",
+            "optional": false,
+            "field": "commande.carte",
+            "description": "<p>Carte de la commande</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas de succès",
+          "content": "HTTP/1.1 200 OK\n\n{\n   \"type\" : \"collection,\n   \"meta\" ; { \"locale\":\"fr-FR\" },\n   \"taille\" : {\n      \"id\"  : \"1\",\n      \"nom\" : \"commande1\",\n      \"mail\" : mail@gmail.com\",\n      \"date\" : \"0000-00-00\",\n      \"heure\" : \"00:00:00\"\n      \"etat\" : \"0\",\n       \"token\" : \"1356431355332\",\n       \"carte\" : \"5555632179\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Erreur : 404": [
+          {
+            "group": "Erreur : 404",
+            "optional": false,
+            "field": "TailleNotFoundInSandwich",
+            "description": "<p>TailleFromSandwich inexistante</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas d'erreur",
+          "content": "HTTP/1.1 404 Not Found\n\n{\n  \"type\" : \"error\",\n  \"error\" : 404,\n  \"message\" : \"ressource non disponible : /commandes/{id}\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./rest.php",
+    "groupTitle": "Commandes"
+  },
+  {
+    "type": "post",
+    "url": "/commandes/{id}/paiement",
+    "title": "payer une commande",
+    "group": "Commandes",
+    "name": "PayerCommandes",
+    "version": "0.1.0",
+    "description": "<p>Création d'une ressource de type commandes. La commande est payer. Le numéro de la carte bancaire et ça date d'expriation doivent être fournis. La réponse retournée indique l'id et le token de la nouvelle ressource.</p>",
+    "parameter": {
+      "fields": {
+        "request parameters": [
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "carte_bc",
+            "description": "<p>Numéro de la carte bancaire</p>"
+          },
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "date_expiration_bc",
+            "description": "<p>Date d'expriation de la carte bancaire</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de paramètres",
+          "content": "{\n  \"carte_bc\"  : \"5555555555555555\",\n  \"date_expiration_bc\" : \"1/22\"\n}",
+          "type": "request"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Réponse : 200": [
+          {
+            "group": "Réponse : 200",
+            "type": "json",
+            "optional": false,
+            "field": "commande",
+            "description": "<p>Paiement accépté</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas de succès",
+          "content": "    POST /commandes/ HTTP/1.1\n   Host: api.lbs.local\n   Content-Type: application/json;charset=utf8\n\t  Location: /commandes/e3786989-e0d2-4cfb-a72f-455ca4a16beb\n\n   {\n      \"carte_bc\"  : \"5555555555555555\",\n      \"date_expiration_bc\" : \"1/22\"\n    }",
+          "type": "response"
+        }
+      ]
+    },
+    "header": {
+      "fields": {
+        "response headers": [
+          {
+            "group": "response headers",
+            "type": "String",
+            "optional": false,
+            "field": "Location:",
+            "description": "<p>uri de la ressource créée et l'id</p>"
+          },
+          {
+            "group": "response headers",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type:",
+            "description": "<p>format de représentation de la ressource réponse</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Réponse : 400": [
+          {
+            "group": "Réponse : 400",
+            "optional": false,
+            "field": "MissingParameter",
+            "description": "<p>paramètre manquant dans la requête</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas d'erreur",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"type\": \"error\",\n  \"error\" : 400,\n  \"message\" : \"donnée manquante (description)\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./rest.php",
+    "groupTitle": "Commandes"
+  },
+  {
+    "type": "post",
+    "url": "/commandes/{id}/sandwichs",
+    "title": "ajout un sandwich a la commande",
+    "group": "Commandes",
+    "name": "PutSandwichToCart",
+    "version": "0.1.0",
+    "description": "<p>Création d'une ressource de type commandes. Le sandwich à été ajouter a la commande. L'id du sandwich, sa taille et sa quantité doivent être fournis. La réponse retournée indique l'id et le token de la nouvelle ressource.</p>",
+    "parameter": {
+      "fields": {
+        "request parameters": [
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "sandwich.id_sandwich",
+            "description": "<p>Id du sandwich a ajouté</p>"
+          },
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "sandwich.id_taille",
+            "description": "<p>Taille du sandwich a ajouté</p>"
+          },
+          {
+            "group": "request parameters",
+            "type": "String",
+            "optional": false,
+            "field": "sandwich.qte",
+            "description": "<p>Quantité du sandwich a ajouté</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de paramètres",
+          "content": "    {\n\t\t sandwich : {\n      \t\"id_sandwich\"  : \"1\",\n      \t\"id_taille\"  : \"1\",\n      \t\"qte\" : \"1\"\n\t\t }\n    }",
+          "type": "request"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Réponse : 200": [
+          {
+            "group": "Réponse : 200",
+            "type": "json",
+            "optional": false,
+            "field": "commande",
+            "description": "<p>Paiement accépté</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas de succès",
+          "content": "   POST /commandes/{id}/sandwichs HTTP/1.1\n   Host: api.lbs.local\n   Content-Type: application/json;charset=utf8\n\t  Location: /commandes/e3786989-e0d2-4cfb-a72f-455ca4a16beb/sandwichs\n\n   {\n\t\t sandwich : {\n      \t\"id_sandwich\"  : \"1\",\n      \t\"id_taille\"  : \"1\",\n      \t\"qte\" : \"1\"\n\t\t }\n    }",
+          "type": "response"
+        }
+      ]
+    },
+    "header": {
+      "fields": {
+        "response headers": [
+          {
+            "group": "response headers",
+            "type": "String",
+            "optional": false,
+            "field": "Location:",
+            "description": "<p>uri de la ressource créée et l'id</p>"
+          },
+          {
+            "group": "response headers",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type:",
+            "description": "<p>format de représentation de la ressource réponse</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Réponse : 400": [
+          {
+            "group": "Réponse : 400",
+            "optional": false,
+            "field": "MissingParameter",
+            "description": "<p>paramètre manquant dans la requête</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "exemple de réponse en cas d'erreur",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"type\": \"error\",\n  \"error\" : 400,\n  \"message\" : \"donnée manquante (description)\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./rest.php",
+    "groupTitle": "Commandes"
+  },
+  {
     "type": "get",
     "url": "/sandwichs/{id}",
     "title": "accéder à un sandwich",
@@ -1407,4 +2184,4 @@
     "filename": "./rest.php",
     "groupTitle": "Sandwich"
   }
-]
+] });

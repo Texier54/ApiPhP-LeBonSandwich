@@ -5,7 +5,7 @@
  * Creation Date: 24/10/2017
  * description:
  *
- * @author: Islam/Batiste
+ * @author: Islam
  */
 
 /**
@@ -615,6 +615,67 @@ $app->get('/sandwichs/{id}/tailles', function (Request $req, Response $resp, $ar
 )->setName('tailleFromSand');
 
 
+/**
+ * @api {post} /commandes/  créer une commande
+ * @apiGroup Commandes
+ * @apiName CreateCommandes
+ * @apiVersion 0.1.0
+ *
+ *
+ * @apiDescription Création d'une ressource de type commandes.
+ * La commande est ajoutée dans la base, son identifiant et token sont créé.
+ * Le nom du client, la description du client et la date et heure
+ * de la commande doivent être fournis.
+ * La réponse retournée indique l'id et le token de la nouvelle ressource et contient.
+ *
+ *
+ * @apiParam  (request parameters) {String} nom_cient Nom du client de la commande
+ * @apiParam  (request parameters) {String} mail_client Mail du client de la commande
+ * @apiParam  (request parameters) {String} livraison la ressource livraison fournis
+ * @apiParam  (request parameters) {String} livraison.date date de la commande
+ * @apiParam  (request parameters) {String} livraison.heure heure de la commande
+ * @apiHeader (request headers) {String} Content-Type:=application/json format utilisé pour les données transmises
+ *
+ * @apiParamExample {request} exemple de paramètres
+ *     {
+ *       "nom_client"  : "jean mi",
+ *       "mail_client" : "jm@gmal.com",
+ * 		 "livraison"   : {
+ * 			"date"	: "7-12-2017",
+ * 			"heure" : "12:30"
+ * 		 }
+ *     }
+ *
+ * @apiSuccess (Réponse : 201) {json} commande représentation json de la nouvelle commande
+ *
+ * @apiHeader (response headers) {String} Location: uri de la ressource créée et l'id
+ * @apiHeader (response headers) {String} Content-Type: format de représentation de la ressource réponse
+ *
+ * @apiSuccessExample {response} exemple de réponse en cas de succès
+ *     POST /commandes/ HTTP/1.1
+ *    Host: api.lbs.local
+ *    Content-Type: application/json;charset=utf8
+ * 	  Location: /commandes/e3786989-e0d2-4cfb-a72f-455ca4a16beb
+ *
+ *    {
+ *       "nom_client"  : "jean mi",
+ *       "mail_client" : "jm@gmal.com",
+ * 		 "livraison"   : {
+ * 			"date"	: "7-12-2017",
+ * 			"heure" : "12:30"
+ * 		 }
+ *     }
+ *
+ * @apiError (Réponse : 400) MissingParameter paramètre manquant dans la requête
+ *
+ * @apiErrorExample {json} exemple de réponse en cas d'erreur
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "type": "error",
+ *       "error" : 400,
+ *       "message" : "donnée manquante (description)"
+ *     }
+ */
 
 $app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
 
@@ -622,9 +683,56 @@ $app->post('/commandes[/]', function (Request $req, Response $resp, $args) {
 
 	return $c->createCommande($req, $resp, $args);
 	}
-);
+)->add(new Validation( $validatorsCommandes));
 
-
+/**
+ * @api {post} /commandes/{id}/paiement  payer une commande
+ * @apiGroup Commandes
+ * @apiName PayerCommandes
+ * @apiVersion 0.1.0
+ *
+ *
+ * @apiDescription Création d'une ressource de type commandes.
+ * La commande est payer.
+ * Le numéro de la carte bancaire et ça date d'expriation doivent être fournis.
+ * La réponse retournée indique l'id et le token de la nouvelle ressource.
+ *
+ *
+ * @apiParam  (request parameters) {String} carte_bc Numéro de la carte bancaire
+ * @apiParam  (request parameters) {String} date_expiration_bc Date d'expriation de la carte bancaire
+ *
+ * @apiParamExample {request} exemple de paramètres
+ *     {
+ *       "carte_bc"  : "5555555555555555",
+ *       "date_expiration_bc" : "1/22"
+ *     }
+ *
+ * @apiSuccess (Réponse : 200) {json} commande Paiement accépté
+ *
+ * @apiHeader (response headers) {String} Location: uri de la ressource créée et l'id
+ * @apiHeader (response headers) {String} Content-Type: format de représentation de la ressource réponse
+ *
+ * @apiSuccessExample {response} exemple de réponse en cas de succès
+ *     POST /commandes/ HTTP/1.1
+ *    Host: api.lbs.local
+ *    Content-Type: application/json;charset=utf8
+ * 	  Location: /commandes/e3786989-e0d2-4cfb-a72f-455ca4a16beb
+ *
+ *    {
+ *       "carte_bc"  : "5555555555555555",
+ *       "date_expiration_bc" : "1/22"
+ *     }
+ *
+ * @apiError (Réponse : 400) MissingParameter paramètre manquant dans la requête
+ *
+ * @apiErrorExample {json} exemple de réponse en cas d'erreur
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "type": "error",
+ *       "error" : 400,
+ *       "message" : "donnée manquante (description)"
+ *     }
+ */
 
 
 $app->post('/commandes/{id}/paiement', function (Request $req, Response $resp, $args) {
@@ -635,7 +743,62 @@ $app->post('/commandes/{id}/paiement', function (Request $req, Response $resp, $
 	}
 )->add('checkToken');
 
-
+/**
+ * @api {get} /commandes/{id}  accéder à une commande
+ * @apiGroup Commandes
+ * @apiName GetCommandes
+ * @apiVersion 0.1.0
+ *
+ *
+ * @apiDescription Accès à une ressource de type commande :
+ * permet d'accéder à la représentation de la ressource commande.
+ * Retourne une représentation json de la ressource, incluant son nom, mail, date,
+ * et son pivot.
+ *
+ * @apiParam {Number} id Identifiant unique de la catégorie
+ *
+ *
+ * @apiSuccess (Succès : 200) {String} type type de la réponse, ici resource
+ * @apisuccess (Succès : 200) {Object} meta méta-données sur la réponse
+ * @apisuccess (Succès : 200) {Tring}  meta.locale langue de la réponse
+ * @apisuccess (Succès : 200) {Object} commande la ressource commande retournée
+ * @apiSuccess (Succès : 200) {Number} commande.id Identifiant de la commande
+ * @apiSuccess (Succès : 200) {String} commande.nom Nom de la commande
+ * @apiSuccess (Succès : 200) {String} commande.mail Mail de la commande
+ * @apiSuccess (Succès : 200) {Number} commande.date Date de la commande
+ * @apiSuccess (Succès : 200) {Number} commande.heure Heure de la commande
+ * @apiSuccess (Succès : 200) {Number} commande.etat Etat de la commande
+ * @apiSuccess (Succès : 200) {Number} commande.token Token de la commande
+ * @apiSuccess (Succès : 200) {Number} commande.carte Carte de la commande
+ *
+ * @apiSuccessExample {json} exemple de réponse en cas de succès
+ *     HTTP/1.1 200 OK
+ *
+ *     {
+ *        "type" : "collection,
+ *        "meta" ; { "locale":"fr-FR" },
+ *        "taille" : {
+ *           "id"  : "1",
+ *           "nom" : "commande1",
+ *           "mail" : mail@gmail.com",
+ *           "date" : "0000-00-00",
+ *           "heure" : "00:00:00"
+ *           "etat" : "0",
+ *            "token" : "1356431355332",
+ *            "carte" : "5555632179"
+ *     }
+ *
+ * @apiError (Erreur : 404) TailleNotFoundInSandwich TailleFromSandwich inexistante
+ *
+ * @apiErrorExample {json} exemple de réponse en cas d'erreur
+ *     HTTP/1.1 404 Not Found
+ *
+ *     {
+ *       "type" : "error",
+ *       "error" : 404,
+ *       "message" : "ressource non disponible : /commandes/{id}"
+ *     }
+ */
 
 $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
@@ -643,8 +806,64 @@ $app->get('/commandes/{id}', function (Request $req, Response $resp, $args) {
 
 	return $c->getDescCommande($req, $resp, $args);
 	}
-)->setName('comid')->add('checkToken')->add(new Validation( $validatorsCommandes));
+)->setName('comid');
 
+
+/**
+ * @api {post} /commandes/{id}/sandwichs  ajout un sandwich a la commande
+ * @apiGroup Commandes
+ * @apiName PutSandwichToCart
+ * @apiVersion 0.1.0
+ *
+ *
+ * @apiDescription Création d'une ressource de type commandes.
+ * Le sandwich à été ajouter a la commande.
+ * L'id du sandwich, sa taille et sa quantité doivent être fournis.
+ * La réponse retournée indique l'id et le token de la nouvelle ressource.
+ *
+ *
+ * @apiParam  (request parameters) {String} sandwich.id_sandwich Id du sandwich a ajouté
+ * @apiParam  (request parameters) {String} sandwich.id_taille Taille du sandwich a ajouté
+ * @apiParam  (request parameters) {String} sandwich.qte Quantité du sandwich a ajouté
+ *
+ * @apiParamExample {request} exemple de paramètres
+ *     {
+ * 		 sandwich : {
+ *       	"id_sandwich"  : "1",
+ *       	"id_taille"  : "1",
+ *       	"qte" : "1"
+ * 		 }
+ *     }
+ *
+ * @apiSuccess (Réponse : 200) {json} commande Paiement accépté
+ *
+ * @apiHeader (response headers) {String} Location: uri de la ressource créée et l'id
+ * @apiHeader (response headers) {String} Content-Type: format de représentation de la ressource réponse
+ *
+ * @apiSuccessExample {response} exemple de réponse en cas de succès
+ *    POST /commandes/{id}/sandwichs HTTP/1.1
+ *    Host: api.lbs.local
+ *    Content-Type: application/json;charset=utf8
+ * 	  Location: /commandes/e3786989-e0d2-4cfb-a72f-455ca4a16beb/sandwichs
+ *
+ *    {
+ * 		 sandwich : {
+ *       	"id_sandwich"  : "1",
+ *       	"id_taille"  : "1",
+ *       	"qte" : "1"
+ * 		 }
+ *     }
+ *
+ * @apiError (Réponse : 400) MissingParameter paramètre manquant dans la requête
+ *
+ * @apiErrorExample {json} exemple de réponse en cas d'erreur
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "type": "error",
+ *       "error" : 400,
+ *       "message" : "donnée manquante (description)"
+ *     }
+ */
 
 $app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, $args) {
 
@@ -655,6 +874,49 @@ $app->post('/commandes/{id}/sandwichs', function (Request $req, Response $resp, 
 )->add(new Validation( $validatorsCommandes))->add('checkToken');
 
 
+/**
+ * @api {get} /cartes/{id}/auth  authentification
+ * @apiGroup Cartes
+ * @apiName AuthentificationCartes
+ * @apiVersion 0.1.0
+ *
+ *
+ * @apiDescription Accès à une ressource de type cartes :
+ * permet d'accéder à la représentation de la ressource sandwichs et ces tailles disponibles.
+ * Retourne une représentation json de la ressource, incluant son nom, prix,
+ * et son pivot.
+ *
+ * @apiParam {Number} id Identifiant unique de la catégorie
+ *
+ *
+ * @apiSuccess (Succès : 200) {String} type type de la réponse, ici resource
+ * @apisuccess (Succès : 200) {Object} auth la ressource auth retournée
+ * @apiSuccess (Succès : 200) {Number} auth.id Identifiant de l'auth
+ * @apiSuccess (Succès : 200) {String} auth.nom Nom de l'auth
+ * @apiSuccess (Succès : 200) {String} auth.passwd Mot de passe de l'auth
+ *
+ * @apiSuccessExample {json} exemple de réponse en cas de succès
+ *     HTTP/1.1 200 OK
+ *
+ *     {
+ *        "type" : "collection,
+ *        "id"  : "1",
+ *        "nom" : "jean",
+ *        "passwd" : "jeanforlife"
+ *     }
+ *
+ * @apiError (Erreur : 404) MissingParameter paramètre manquant dans la requête
+ *
+ * @apiErrorExample {json} exemple de réponse en cas d'erreur
+ *     HTTP/1.1 404 Not Found
+ *
+ *     {
+ *       "type" : "error",
+ *       "error" : 404,
+ *       "message" : "ressource non disponible : /cartes/{id}/auth"
+ *     }
+ */
+
 $app->get('/cartes/{id}/auth', function (Request $req, Response $resp, $args) {
 
 	$c = new lbs\api\control\AuthController($this);
@@ -664,7 +926,55 @@ $app->get('/cartes/{id}/auth', function (Request $req, Response $resp, $args) {
 );
 
 
-
+/**
+ * @api {get} /cartes/{id}  accéder à une carte
+ * @apiGroup Cartes
+ * @apiName GetCartes
+ * @apiVersion 0.1.0
+ *
+ *
+ * @apiDescription Accès à une ressource de type carte :
+ * permet d'accéder à la représentation de la ressource carte.
+ * Retourne une représentation json de la ressource, incluant son nom, mail, date,
+ * et son pivot.
+ *
+ * @apiParam {Number} id Identifiant unique de la catégorie
+ *
+ *
+ * @apiSuccess (Succès : 200) {String} type type de la réponse, ici resource
+ * @apisuccess (Succès : 200) {Object} meta méta-données sur la réponse
+ * @apisuccess (Succès : 200) {Tring}  meta.locale langue de la réponse
+ * @apisuccess (Succès : 200) {Object} carte la ressource carte retournée
+ * @apiSuccess (Succès : 200) {Number} carte.id Identifiant de la carte
+ * @apiSuccess (Succès : 200) {String} carte.date_creation Date de création de la carte
+ * @apiSuccess (Succès : 200) {String} carte.date_valide Date de validité de la carte
+ * @apiSuccess (Succès : 200) {Number} carte.cumul Cumul de la carte
+ *
+ * @apiSuccessExample {json} exemple de réponse en cas de succès
+ *     HTTP/1.1 200 OK
+ *
+ *     {
+ *        "type" : "collection,
+ *        "meta" ; { "locale":"fr-FR" },
+ *        "carte" : {
+ *           "id"  : "1",
+ *           "date_creation" : "0000-00-00",
+ *           "date_valide" : 0000-00-00",
+ *           "cumul" : "23"
+ *     }
+ *
+ * @apiError (Erreur : 401) RefusedAccess accès refusé à la ressource
+ * @apiError (Erreur : 404) MissingParameter paramètre manquant dans la requête
+ *
+ * @apiErrorExample {json} exemple de réponse en cas d'erreur
+ *     HTTP/1.1 404 Not Found
+ *
+ *     {
+ *       "type" : "error",
+ *       "error" : 404,
+ *       "message" : "ressource non disponible : /cartes/{id}"
+ *     }
+ */
 
 $app->get('/cartes/{id}', function (Request $req, Response $resp, $args) {
 
@@ -674,6 +984,54 @@ $app->get('/cartes/{id}', function (Request $req, Response $resp, $args) {
 	}
 );
 
+/**
+ * @api {post} /cartes/{id}/paiement  payer avec la carte
+ * @apiGroup Cartes
+ * @apiName BuyWithCard
+ * @apiVersion 0.1.0
+ *
+ *
+ * @apiDescription Création d'une ressource de type cartes.
+ * La commande à été ajouter payer avec la carte.
+ * Le numéro de la carte bancaire et sa date d'expiration doivent être fournis.
+ * La réponse retournée indique le cumul ajouté de la nouvelle ressource.
+ *
+ *
+ * @apiParam  (request parameters) {String} carte_bc Numéro de la carte bancaire
+ * @apiParam  (request parameters) {String} date_expiration_bc Date d'expiration de la carte bancaire
+ *
+ * @apiParamExample {request} exemple de paramètres
+ *     {
+ *     		"carte_bc"  : "5454693217981245",
+ *     		"date_expiration_bc"  : "975"
+ *     }
+ *
+ * @apiSuccess (Réponse : 200) {json} commande Paiement accépté
+ *
+ * @apiHeader (response headers) {String} Location: uri de la ressource créée et l'id
+ * @apiHeader (response headers) {String} Content-Type: format de représentation de la ressource réponse
+ *
+ * @apiSuccessExample {response} exemple de réponse en cas de succès
+ *    POST /cartes/{id}/paiement HTTP/1.1
+ *    Host: api.lbs.local
+ *    Content-Type: application/json;charset=utf8
+ * 	  Location: /cartes/e3786989-e0d2-4cfb-a72f-455ca4a16beb/paiement
+ *
+ *    {
+ *     		"carte_bc"  : "5454693217981245",
+ *     		"date_expiration_bc"  : "975"
+ *     }
+ *
+ * @apiError (Réponse : 400) MissingParameter paramètre manquant dans la requête
+ *
+ * @apiErrorExample {json} exemple de réponse en cas d'erreur
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "type": "error",
+ *       "error" : 400,
+ *       "message" : "donnée manquante (description)"
+ *     }
+ */
 
 $app->post('/cartes/{id}/paiement', function (Request $req, Response $resp, $args) {
 
