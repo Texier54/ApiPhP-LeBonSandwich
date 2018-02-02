@@ -13,7 +13,7 @@ Ces instructions vous permettront d'obtenir une copie du projet opérationnel su
 
 ### Prérequis
 
-Nécéssite Eloquent
+Nécéssite Composer
 
 ### Installation
 
@@ -37,6 +37,10 @@ docker-compose up
 
 ```
 docker-compose start
+```
+
+```
+Dans /src composer install
 ```
 
 ## Fait avec
