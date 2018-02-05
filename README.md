@@ -53,7 +53,8 @@ Dans /src composer install
 
 * **Baptiste Texier** - *Lancement* - [Github](https://github.com/texier54)
 * **Islam Elshobokshy** - [Github](https://github.com/elshobokshy)
-* **alhasnecode** - [Github](https://github.com/alhasnecode)
+* **Mohamed** - [Github](https://github.com/alhasnecode)
+* **Daniel**
 
 ## License
 
